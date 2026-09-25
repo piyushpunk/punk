@@ -10,7 +10,7 @@ export default function InfoColumns() {
       <div className="ak-shell grid gap-8 py-12 sm:grid-cols-3">
         {COLS.map((c) => (
           <div key={c.title} className="text-center sm:text-left">
-            <h3 className="text-[12px] font-bold uppercase tracking-[0.2em]">{c.title}</h3>
+            <h3 className="text-[13px] font-bold uppercase tracking-[0.2em]">{c.title}</h3>
             <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{c.copy}</p>
           </div>
         ))}

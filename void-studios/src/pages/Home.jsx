@@ -88,7 +88,7 @@ export default function Home() {
         <div className="ak-shell">
           <div className="mb-8 flex items-end justify-between">
             <h2 className="ak-section-title">Just Dropped</h2>
-            <Link to="/new-arrivals" className="text-[11px] font-semibold uppercase tracking-[0.2em] underline-offset-4 hover:underline hover:decoration-accent">
+            <Link to="/new-arrivals" className="text-[12px] font-bold uppercase tracking-[0.2em] underline-offset-4 hover:underline hover:decoration-accent">
               View All
             </Link>
           </div>
@@ -104,7 +104,7 @@ export default function Home() {
         <div className="ak-shell">
           <div className="mb-8 flex items-end justify-between">
             <h2 className="ak-section-title">Top Picks</h2>
-            <Link to="/tops" className="text-[11px] font-semibold uppercase tracking-[0.2em] underline-offset-4 hover:underline hover:decoration-accent">
+            <Link to="/tops" className="text-[12px] font-bold uppercase tracking-[0.2em] underline-offset-4 hover:underline hover:decoration-accent">
               View All
             </Link>
           </div>

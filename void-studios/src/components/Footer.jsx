@@ -72,7 +72,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/15">
-        <div className="ak-shell flex flex-col items-center justify-center gap-3 py-5 text-[10px] uppercase tracking-[0.22em] text-white/60 sm:flex-row">
+        <div className="ak-shell flex flex-col items-center justify-center gap-3 py-5 text-[12px] uppercase tracking-[0.22em] text-white/60 sm:flex-row">
           <p>{BRAND.copyright} · {BRAND.madeIn}</p>
         </div>
       </div>

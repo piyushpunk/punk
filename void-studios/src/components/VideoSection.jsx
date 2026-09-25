@@ -40,7 +40,7 @@ export default function VideoSection({ src, poster, banner, heading }) {
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-3">
               <span className="font-wordmark text-4xl uppercase tracking-wide text-ink/15">AKUMA</span>
-              <span className="text-[9px] uppercase tracking-[0.3em] text-ink-soft/60">Campaign film coming soon</span>
+              <span className="text-[12px] uppercase tracking-[0.3em] text-ink-soft/60">Campaign film coming soon</span>
             </div>
           )}
 

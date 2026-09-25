@@ -172,8 +172,8 @@ export default function Header() {
                         `whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors ${
                           item.pill
                             ? headHover
-                              ? 'rounded-full border border-white/50 bg-white/15 px-3 py-1.5 text-white hover:bg-white/25'
-                              : 'rounded-full border border-accent/60 bg-accent/10 px-3 py-1.5 text-accent hover:bg-accent/20'
+                              ? 'text-white/90 hover:text-white'
+                              : 'text-accent hover:underline hover:decoration-accent hover:underline-offset-8'
                             : item.dot
                               ? headHover
                                 ? 'flex items-center gap-2 text-bg-primary'

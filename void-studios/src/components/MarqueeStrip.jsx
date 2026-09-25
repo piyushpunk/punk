@@ -12,7 +12,7 @@ export default function MarqueeStrip({ preset = 'primary', dark = true, classNam
     >
       <div className="ak-marquee flex w-max items-center gap-10 whitespace-nowrap">
         {row.map((item, i) => (
-          <span key={i} className="flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.3em]">
+          <span key={i} className="flex items-center gap-10 text-[12px] font-bold uppercase tracking-[0.3em]">
             {item}
             <span aria-hidden="true" className={dark ? 'text-bg-primary/40' : 'text-ink/30'}>✦</span>
           </span>

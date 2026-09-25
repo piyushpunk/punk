@@ -59,7 +59,7 @@ function Tile({ tile, index }) {
           </div>
         )}
       </div>
-      <p className="mt-3 text-center text-[11px] font-semibold uppercase tracking-[0.24em] group-hover:underline group-hover:decoration-accent group-hover:underline-offset-4">
+      <p className="mt-2 text-center text-[12px] font-semibold uppercase tracking-[0.24em] group-hover:underline group-hover:decoration-accent group-hover:underline-offset-4">
         {tile.label}
       </p>
     </Link>
@@ -70,7 +70,7 @@ export default function CategoryShowcase() {
   return (
     <section className="bg-bg-primary py-16 sm:py-20">
       <div className="ak-shell">
-        <p className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
+        <p className="mb-8 text-center text-[12px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
           Shop by category
         </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-5">
