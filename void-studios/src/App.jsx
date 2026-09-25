@@ -5,7 +5,6 @@ import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
 import ToastStack from './components/ToastStack'
 import ScrollToTop from './components/ScrollToTop'
-import Preloader from './components/Preloader'
 import { useStore } from './context/StoreContext'
 
 import Home from './pages/Home'
@@ -37,7 +36,6 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Preloader />
       <ScrollToTop />
       <Header />
       <main className="flex-1">
