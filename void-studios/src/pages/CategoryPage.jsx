@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ProductGrid from '../components/ProductGrid'
+import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 
 
