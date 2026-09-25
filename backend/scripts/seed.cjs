@@ -28,17 +28,17 @@ const CATEGORIES = [
 
 // [name, categorySlug, basePrice, salePrice, sizes, colors, collections, description]
 const PRODUCTS = [
-  ["Oni Blank Tee", "tshirts", 2490, null, ["S","M","L","XL","XXL"], ["Bone","Ink"], ["new-arrivals","basics"], "Heavyweight 260 GSM boxy tee with tonal back-neck embroidery."],
-  ["Kanji Logo Tee", "tshirts", 2790, 1990, ["S","M","L","XL","XXL"], ["Bone","Ash"], ["new-arrivals","sale"], "Oversized tee with the AKUMA wordmark across the chest in puff print."],
-  ["Temple Wash Tee", "tshirts", 2590, null, ["S","M","L","XL"], ["Sand"], ["basics"], "Garment-dyed heavyweight tee with a lived-in wash and dropped shoulders."],
-  ["Shinigami Hoodie", "hoodies", 5490, null, ["S","M","L","XL","XXL"], ["Ink","Bone"], ["new-arrivals","top-picks"], "460 GSM brushed-back fleece hoodie, double-layered hood, ribbed cuffs."],
-  ["Oni Mask Hoodie", "hoodies", 5990, 4490, ["S","M","L","XL"], ["Ink"], ["top-picks","sale"], "Premium heavyweight hoodie with puff-print oni mask artwork."],
-  ["Kaido Work Jacket", "jackets", 8490, null, ["S","M","L","XL"], ["Ink","Sand"], ["top-picks"], "12oz duck canvas work jacket with corduroy collar and utility pockets."],
-  ["Ronin Cargo Pant", "pants", 5290, null, ["28","30","32","34","36"], ["Ink","Ash"], ["new-arrivals"], "Wide-leg cargo pants with bellowed pockets and adjustable hem."],
+  ["Oni Blank Tee", "tshirts", 2490, null, ["S","M","L","XL","XXL"], ["White","Black"], ["new-arrivals","basics"], "Heavyweight 260 GSM boxy tee with tonal back-neck embroidery."],
+  ["Kanji Logo Tee", "tshirts", 2790, 1990, ["S","M","L","XL","XXL"], ["White","Olive Green"], ["new-arrivals","sale"], "Oversized tee with the AKUMA wordmark across the chest in puff print."],
+  ["Temple Wash Tee", "tshirts", 2590, null, ["S","M","L","XL"], ["Brown"], ["basics"], "Garment-dyed heavyweight tee with a lived-in wash and dropped shoulders."],
+  ["Shinigami Hoodie", "hoodies", 5490, null, ["S","M","L","XL","XXL"], ["Black","White"], ["new-arrivals","top-picks"], "460 GSM brushed-back fleece hoodie, double-layered hood, ribbed cuffs."],
+  ["Oni Mask Hoodie", "hoodies", 5990, 4490, ["S","M","L","XL"], ["Black"], ["top-picks","sale"], "Premium heavyweight hoodie with puff-print oni mask artwork."],
+  ["Kaido Work Jacket", "jackets", 8490, null, ["S","M","L","XL"], ["Black","Brown"], ["top-picks"], "12oz duck canvas work jacket with corduroy collar and utility pockets."],
+  ["Ronin Cargo Pant", "pants", 5290, null, ["28","30","32","34","36"], ["Black","Olive Green"], ["new-arrivals"], "Wide-leg cargo pants with bellowed pockets and adjustable hem."],
   ["Kuro Straight Jean", "jeans", 5990, null, ["28","30","32","34","36"], ["Raw Indigo"], ["new-arrivals"], "14oz raw selvedge straight jean, unwashed and rigid."],
   ["Ash Baggy Jean", "jeans", 5490, null, ["30","32","34"], ["Washed Grey"], ["sale"], "Baggy-fit jean in washed grey denim with stacked hem."],
-  ["Studio Short", "shorts", 3290, null, ["S","M","L","XL"], ["Bone","Ink"], ["basics"], "Heavyweight fleece short with elastic waist and side pockets."],
-  ["Kanji Socks (3-Pack)", "accessories", 1190, null, ["Free"], ["Bone"], ["basics"], "Three pairs of cushioned cotton socks with tonal kanji weave."],
+  ["Studio Short", "shorts", 3290, null, ["S","M","L","XL"], ["White","Black"], ["basics"], "Heavyweight fleece short with elastic waist and side pockets."],
+  ["Kanji Socks (3-Pack)", "accessories", 1190, null, ["Free"], ["White"], ["basics"], "Three pairs of cushioned cotton socks with tonal kanji weave."],
 ];
 
 const ADMIN = {

@@ -54,7 +54,7 @@ export default function AdminPage() {
   const totalImages = (editing !== 'new' && editing?.images?.length ? editing.images.length : 0) + files.length
 
   // quick variant-matrix generator inputs
-  const [gen, setGen] = useState({ sizes: 'S, M, L', colors: 'Ink', stock: 8, price: '' })
+  const [gen, setGen] = useState({ sizes: 'S, M, L', colors: 'Black', stock: 8, price: '' })
   const keyRef = useRef(1)
   const nextKey = () => `v${keyRef.current++}`
 
