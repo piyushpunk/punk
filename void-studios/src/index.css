@@ -83,3 +83,33 @@ header:has(.nav-group:hover) .ak-nav-overlay {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
+
+/* --- preloader --- */
+@keyframes ak-preloader-sharpen {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    letter-spacing: 0.18em;
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: -0.01em;
+  }
+}
+.ak-preloader-wordmark {
+  animation: ak-preloader-sharpen 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ak-preloader-fill {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.ak-preloader-bar {
+  transform: translateX(-100%);
+  animation: ak-preloader-fill 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
