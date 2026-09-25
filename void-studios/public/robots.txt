@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /reset-password
+
+Sitemap: https://punkstudios.vercel.app/sitemap.xml

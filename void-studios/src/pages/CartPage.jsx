@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 import ProductImage from '../components/ProductImage'
 import { BagIcon, TrashIcon, PlusIcon, MinusIcon } from '../components/Icons'
 import { PROMO_CODES, FREE_SHIPPING_THRESHOLD, SHIPPING_FLAT_RATE } from '../content/content'
@@ -8,6 +9,7 @@ import { PROMO_CODES, FREE_SHIPPING_THRESHOLD, SHIPPING_FLAT_RATE } from '../con
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
 export default function CartPage() {
+  useSeo({ title: 'Your Bag', path: '/cart', noindex: true })
   const { cartLines, cartSubtotal, updateQty, removeLine, clearCart } = useStore()
   const [promoInput, setPromoInput] = useState('')
   const [promo, setPromo] = useState(null) // { code, pct }

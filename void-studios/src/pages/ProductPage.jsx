@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import ProductImage from '../components/ProductImage'
 import ProductCard from '../components/ProductCard'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 import { HeartIcon, BagIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/Icons'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
@@ -32,6 +33,36 @@ export default function ProductPage() {
         : [],
     [catalog, product],
   )
+
+  // Product schema (price/availability) + per-product title/description/canonical
+  const productSchema = useMemo(() => {
+    if (!product) return null
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      image: product.images?.[0] ? [product.images[0]] : undefined,
+      description: product.description ?? `${product.name} — AKUMA streetwear`,
+      brand: { '@type': 'Brand', name: 'AKUMA' },
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: product.salePrice ?? product.price,
+        availability: product.inStock
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+        url: `https://punkstudios.vercel.app/product/${product.id}`,
+      },
+    }
+  }, [product])
+  useSeo({
+    title: product ? product.name : 'Product',
+    description: product
+      ? `${product.name} — ₹${(product.salePrice ?? product.price).toLocaleString('en-IN')}. Heavyweight AKUMA streetwear. Limited drops, no restocks.`
+      : 'AKUMA product',
+    path: product ? `/product/${product.id}` : '',
+    schema: productSchema,
+  })
 
   // While the API catalog is still loading, a direct visit to /product/:id
   // would look like a 404 — show a loader instead of redirecting.

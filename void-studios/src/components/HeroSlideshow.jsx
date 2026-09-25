@@ -20,7 +20,7 @@ export default function HeroSlideshow() {
             overlay content for flex space — in-flow images squeeze the
             layout and shove the text sideways) --- */}
         <div className="absolute inset-0">
-          <ProductImage src={slide.src} alt="AKUMA" className="h-full w-full object-cover" />
+          <ProductImage src={slide.src} alt="AKUMA" priority className="h-full w-full object-cover" />
         </div>
 
         {/* --- overlay content: tagline chip removed by owner request;

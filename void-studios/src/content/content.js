@@ -98,7 +98,9 @@ export const FOOTER_LINKS = {
   support: [
     { label: 'Track Order', to: '/account' },
     { label: 'Returns & Exchange Policy', to: '/refund' },
-    { label: 'FAQs', to: '/account' },
+    // FAQs page doesn't exist yet — WhatsApp is the live support channel,
+    // and a dead footer link is worse than a direct line to the brand.
+    { label: 'FAQs', href: 'https://wa.me/919318407257?text=' + encodeURIComponent('Hi AKUMA! I have a question.') },
     { label: 'Contact Us', href: 'mailto:akuma04313@gmail.com?subject=' + encodeURIComponent('Hi AKUMA — product question') },
     { label: 'Terms of Service', to: '/terms' },
     { label: 'Privacy Policy', to: '/privacy' },

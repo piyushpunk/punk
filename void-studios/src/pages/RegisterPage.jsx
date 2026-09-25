@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 
 export default function RegisterPage() {
+  useSeo({
+    title: 'Create Account',
+    description: 'Create an AKUMA account — first access to limited drops, order tracking and a saved wishlist.',
+    path: '/register',
+  })
   const { register, toast } = useStore()
   const navigate = useNavigate()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '', terms: false })

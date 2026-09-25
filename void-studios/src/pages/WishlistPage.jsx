@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
 import ProductCard from '../components/ProductCard'
 import { HeartIcon } from '../components/Icons'
+import { useSeo } from '../lib/seo'
 
 export default function WishlistPage() {
+  useSeo({ title: 'Wishlist', path: '/wishlist', noindex: true })
   const { catalog, wishlist, addToCart, toast } = useStore()
   const products = wishlist.map((id) => catalog.find((p) => p.id === id)).filter(Boolean)
 

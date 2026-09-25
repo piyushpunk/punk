@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
+import { useSeo } from '../lib/seo'
 
 export default function ForgotPasswordPage() {
+  useSeo({ title: 'Forgot Password', path: '/forgot-password', noindex: true })
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')

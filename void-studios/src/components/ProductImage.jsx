@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // Renders the product image; when the file is missing (placeholder era),
 // shows a designed skeleton slot so grids look intentional, not broken.
-export default function ProductImage({ src, alt, className = '' }) {
+export default function ProductImage({ src, alt, className = '', priority = false }) {
   const [failed, setFailed] = useState(false)
 
   if (failed || !src) {
@@ -29,7 +29,11 @@ export default function ProductImage({ src, alt, className = '' }) {
     <img
       src={src}
       alt={alt}
-      loading="lazy"
+      // `priority` = above-the-fold LCP image (hero): eager + fetchpriority=high.
+      // Lazy-loading the hero was delaying the largest paint on every page.
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : undefined}
+      decoding={priority ? 'sync' : 'async'}
       onError={() => setFailed(true)}
       className={className}
     />

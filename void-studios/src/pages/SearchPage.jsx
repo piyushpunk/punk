@@ -1,8 +1,10 @@
 import { useSearchParams, Link } from 'react-router-dom'
 import ProductGrid from '../components/ProductGrid'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 
 export default function SearchPage() {
+  useSeo({ title: 'Search', path: '/search', noindex: true })
   const [params] = useSearchParams()
   const { catalog, apiLive } = useStore()
   const q = (params.get('q') ?? '').trim()

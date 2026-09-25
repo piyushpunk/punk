@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ProductGrid from '../components/ProductGrid'
-import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
+
 
 // Single reusable listing page — every category, subcategory and
 // collection route renders this with a different filter. No duplication.
@@ -53,6 +54,15 @@ export default function CategoryPage({ mode, id, apiLive }) {
       products: catalog.filter((p) => p.category === id),
     }
   }, [mode, id, subcategory, catalog])
+
+  // Per-route meta + canonical so each category ranks on its own URL
+  const seoPath =
+    mode === 'subcategory' ? `/${id}/${subcategory}` : mode === 'collection' ? `/${id}` : `/${id}`
+  useSeo({
+    title,
+    description: `Shop ${title?.toLowerCase()} from AKUMA — heavyweight streetwear, limited drops, no restocks. Free shipping above ₹5,000.`,
+    path: seoPath,
+  })
 
   return (
     <div className="bg-bg-primary">

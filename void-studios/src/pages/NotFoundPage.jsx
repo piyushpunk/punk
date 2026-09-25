@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 
+import { useSeo } from '../lib/seo'
+
 export default function NotFoundPage() {
+  useSeo({ title: 'Page Not Found', path: '/404', noindex: true })
   return (
     <div className="bg-bg-primary">
       <div className="ak-shell flex flex-col items-center py-28 text-center">

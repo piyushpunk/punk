@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FLAT_RATE } from '../content/content'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
@@ -8,6 +9,7 @@ const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 // POST cartLines + a shipping address to the orders API here and route to
 // a confirmation page with the real response.
 export default function CheckoutPage() {
+  useSeo({ title: 'Checkout', path: '/checkout', noindex: true })
   const { cartLines, cartSubtotal } = useStore()
 
   if (cartLines.length === 0) {

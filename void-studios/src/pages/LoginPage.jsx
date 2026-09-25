@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 
 export default function LoginPage() {
+  useSeo({
+    title: 'Log In',
+    description: 'Log in to your AKUMA account to track orders, save your wishlist and check out faster.',
+    path: '/login',
+  })
   const { login, toast } = useStore()
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })

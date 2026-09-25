@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 
 // Basic account placeholder — real profile/orders arrive with the backend.
 export default function AccountPage() {
+  useSeo({ title: 'Account', path: '/account', noindex: true })
   const { user, logout } = useStore()
 
   if (!user) {

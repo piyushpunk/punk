@@ -1,5 +1,6 @@
 import PrivacyPolicy from '../content/privacy-policy.md?raw'
 import { useStore } from '../context/StoreContext'
+import { useSeo } from '../lib/seo'
 
 // Minimal markdown rendering for the policy document: H1/H2/H3, italics
 // (the last-updated line), bullet lists, bold text and inline links.
@@ -84,6 +85,11 @@ export function MarkdownBlocks({ md }) {
 }
 
 export default function PrivacyPolicyPage() {
+  useSeo({
+    title: 'Privacy Policy',
+    description: 'How AKUMA collects, uses and protects your personal data — accounts, orders, cookies and your rights under India’s DPDP Act.',
+    path: '/privacy',
+  })
   const { toast } = useStore()
   // The policy body contains [PLACEHOLDER: …] tags the owner fills in —
   // surface a reminder strip so unfinished placeholders are never shipped silently.

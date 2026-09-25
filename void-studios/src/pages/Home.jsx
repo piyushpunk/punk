@@ -12,6 +12,8 @@ import { FEATURED_PRODUCT_ID } from '../content/content'
 import { useStore } from '../context/StoreContext'
 import { Link } from 'react-router-dom'
 
+import { useSeo } from '../lib/seo'
+
 // Editorial split copy — placeholder; swap when brand copy is final.
 const EDITORIAL = {
   heading: 'From the Archive',
@@ -44,6 +46,12 @@ function CollectionList() {
 }
 
 export default function Home() {
+  useSeo({
+    title: 'Bold Streetwear. Limited Drops. No Restocks.',
+    description:
+      'AKUMA is an Indian streetwear label — heavyweight tees, limited drops, no restocks. Shop the latest drop before it sells out.',
+    path: '/',
+  })
   const { catalog, apiLive } = useStore()
 
   const featured = catalog.filter((p) => p.collections?.includes('top-picks'))

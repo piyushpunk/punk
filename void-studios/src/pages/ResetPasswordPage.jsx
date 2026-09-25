@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
+import { useSeo } from '../lib/seo'
 import { useStore } from '../context/StoreContext'
 
 export default function ResetPasswordPage() {
+  useSeo({ title: 'Reset Password', path: '/reset-password', noindex: true })
   const [params] = useSearchParams()
   const token = params.get('token') || ''
   const navigate = useNavigate()
