@@ -12,6 +12,11 @@ export const sendEmail = async ({ to, subject, text, html }) => {
   const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
 
   if (!configured) {
+    // Always log suppression — in production this is the ONLY visible sign
+    // that the SMTP vars never reached the process (vars added to the wrong
+    // service, naming typos, stale deploy). A silent no-mail here is
+    // indistinguishable from a broken SMTP otherwise.
+    console.warn(`📧 [email] SMTP not configured — suppressed mail to ${to} ("${subject}")`);
     if (process.env.NODE_ENV !== "production") {
       console.log(`📧 [mail suppressed — SMTP not configured]\nTo: ${to}\nSubject: ${subject}\n---\n${text}`);
     }
@@ -62,7 +67,12 @@ export const sendEmail = async ({ to, subject, text, html }) => {
         return true;
       })
       .catch((err) => {
-        console.error("📧 Email send failed:", err.message);
+        console.error(
+          "📧 [email] background send failed:",
+          err.message,
+          err.code ? `[code: ${err.code}]` : "",
+          err.response ? `[smtp: ${err.response}]` : ""
+        );
         return false;
       });
 
@@ -77,7 +87,12 @@ export const sendEmail = async ({ to, subject, text, html }) => {
     }
     return ok ? { delivered: true } : { delivered: false, reason: "send failed — see logs" };
   } catch (error) {
-    console.error("📧 Email send failed:", error.message);
+    console.error(
+      "📧 [email] send failed:",
+      error.message,
+      error.code ? `[code: ${error.code}]` : "",
+      error.response ? `[smtp: ${error.response}]` : ""
+    );
     return { delivered: false, reason: error.message };
   }
 };

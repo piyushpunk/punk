@@ -24,11 +24,29 @@ export function attachHealthMeta(app) {
 
   const bootedAt = new Date().toISOString();
 
+  // SMTP visibility: "forgot-password mail never arrives" is undiagnosable
+  // from the outside. This shows whether the SMTP_* vars actually reached
+  // the process (naming typos, vars on the wrong service, stale deploy)
+  // without leaking the secret — user is masked, password never echoed.
+  const maskUser = (u) => (u ? u.replace(/^(.{2}).*?(@.*)$/, "$1***$2") : null);
+  const smtp = {
+    configured: Boolean(process.env.SMTP_HOST && process.env.SMTP_USER),
+    host: process.env.SMTP_HOST || null,
+    port: Number(process.env.SMTP_PORT || 587),
+    user: maskUser(process.env.SMTP_USER),
+    from: process.env.SMTP_FROM || process.env.SMTP_USER || null,
+  };
+
   app.get("/api/v1/health", (_req, res) => {
     res.json({
       success: true,
       message: "API is up",
-      data: { commit: commit ? commit.slice(0, 7) : "unknown", bootedAt },
+      data: {
+        commit: commit ? commit.slice(0, 7) : "unknown",
+        bootedAt,
+        smtp,
+        frontendUrl: process.env.FRONTEND_URL || null,
+      },
     });
   });
 }
