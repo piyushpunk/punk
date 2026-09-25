@@ -7,7 +7,7 @@ export const BRAND = {
   name: 'AKUMA',
   tagline: 'Bold streetwear. Limited drops. No restocks.',
   footerBlurb:
-    'AKUMA is a streetwear label built on heavyweight fabric, restricted drops and archive-minded design.',
+    'AKUMA is a brand in the field of streetwear which we design, using a heavy fabric with a weight between 240 and 340 GSM, featuring trend-driven silhouettes and being released in limited editions. It is never produced on a large scale, always being done with intention.',
   copyright: '© 2026 AKUMA',
   madeIn: 'Made in India',
 }
