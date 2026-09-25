@@ -13,8 +13,8 @@ export default {
       colors: {
         // Palette is mirrored from CSS variables in src/index.css — keep both in sync.
         'bg-primary': '#FDE3CD',
-        'bg-secondary': '#E7E0D6',
-        'bg-alt': '#DCD6CB',
+        'bg-secondary': '#FFFFFF',
+        'bg-alt': '#FFFFFF',
         ink: '#1B1815',
         'ink-soft': '#5C554C',
         accent: '#7A0000', // deep muted maroon — SALE tags, hover underline, sale badges only

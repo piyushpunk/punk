@@ -58,7 +58,7 @@ export default function Header() {
       {/* ---- main bar — light normally, black while hovered ---- */}
       <div
         className={`group/head relative border-b transition-colors duration-200 ${
-          headHover ? 'border-transparent bg-ink' : 'border-line-soft bg-white'
+          headHover ? 'border-transparent bg-ink' : 'border-line-soft bg-bg-primary'
         }`}
         onMouseEnter={() => setHeadHover(true)}
         onMouseLeave={() => setHeadHover(false)}
@@ -104,7 +104,7 @@ export default function Header() {
                     {/* full-width mega-menu — opens under the whole bar on hover */}
                     <div
                       className={`invisible absolute left-0 top-full w-full translate-y-1 border-b opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 ${
-                        headHover ? 'border-ink bg-ink' : 'border-line-soft bg-white'
+                        headHover ? 'border-ink bg-ink' : 'border-line-soft bg-bg-primary'
                       }`}
                     >
                       <div className="ak-shell grid grid-cols-[1fr_280px] gap-10 py-8">
@@ -235,7 +235,7 @@ export default function Header() {
       {mobileOpen && (
         <div className="fixed inset-0 z-[70] nav:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col bg-white shadow-2xl">
+          <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col bg-bg-primary shadow-2xl">
             <div className="flex items-center justify-between border-b border-line-soft px-5 py-4">
               <Logo />
               <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-1">
