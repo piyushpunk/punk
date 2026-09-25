@@ -109,8 +109,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 9 — second marquee, reversed, light */}
-      <MarqueeStrip preset="secondary" dark={false} />
+      {/* 9 — second marquee, reversed, dark like the top strip */}
+      <MarqueeStrip preset="secondary" />
 
       {/* 10 — featured product spotlight */}
       <FeaturedProduct product={featuredProduct} />
