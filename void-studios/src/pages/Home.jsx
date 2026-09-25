@@ -77,7 +77,10 @@ export default function Home() {
       {/* 4 — collection list strip */}
       <CollectionList />
 
-      {/* 5 — featured collection carousel: Just Dropped */}
+      {/* 5 — video section (placeholder until campaign film) */}
+      <VideoSection heading="The Campaign" />
+
+      {/* 6 — featured collection carousel: Just Dropped */}
       <section className="bg-bg-secondary py-16 sm:py-20">
         <div className="ak-shell">
           <div className="mb-8 flex items-end justify-between">
@@ -89,9 +92,6 @@ export default function Home() {
           <ProductCarousel products={justDropped} />
         </div>
       </section>
-
-      {/* 6 — video section (placeholder until campaign film) */}
-      <VideoSection heading="The Campaign" />
 
       {/* 7 — editorial split */}
       <EditorialSplit {...EDITORIAL} flip />
