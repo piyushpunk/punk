@@ -23,14 +23,12 @@ export default function HeroSlideshow() {
           <ProductImage src={slide.src} alt="AKUMA" priority className="h-full w-full object-cover" />
         </div>
 
-        {/* --- overlay content: tagline chip removed by owner request;
-            wordmark styled to sit IN the artwork (poster outline + hard
-            shadow) so it reads as part of the banner, not a label on it --- */}
-        <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
-          <h1 className="ak-hero-stroke font-wordmark text-[clamp(2.5rem,8.5vw,6.5rem)] leading-[0.9] tracking-[-0.01em] text-white">
-            AKUMA
-          </h1>
-          <Link to={slide.to} className="ak-btn-dark mt-2">{slide.cta}</Link>
+        {/* --- overlay content: tagline chip and wordmark removed by owner
+            request — the artwork speaks for itself; only the centered CTA
+            remains. The sr-only H1 keeps the homepage's SEO heading intact. --- */}
+        <div className="relative z-10 flex flex-col items-center px-6 text-center">
+          <h1 className="sr-only">AKUMA — Bold Streetwear</h1>
+          <Link to={slide.to} className="ak-btn-dark">{slide.cta}</Link>
         </div>
       </div>
     </section>
