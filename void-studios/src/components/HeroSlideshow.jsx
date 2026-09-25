@@ -24,11 +24,15 @@ export default function HeroSlideshow() {
         </div>
 
         {/* --- overlay content: tagline chip and wordmark removed by owner
-            request — the artwork speaks for itself; only the centered CTA
-            remains. The sr-only H1 keeps the homepage's SEO heading intact. --- */}
-        <div className="relative z-10 flex flex-col items-center px-6 text-center">
+            request — the artwork speaks for itself. An invisible spacer
+            reserves the wordmark's old slot (same clamp-sized box) so the
+            CTA keeps the exact below-center spot it had when the wordmark
+            sat above it. The sr-only H1 keeps the homepage's SEO heading
+            intact. --- */}
+        <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
           <h1 className="sr-only">AKUMA — Bold Streetwear</h1>
-          <Link to={slide.to} className="ak-btn-dark">{slide.cta}</Link>
+          <div aria-hidden="true" className="invisible select-none font-wordmark text-[clamp(2.5rem,8.5vw,6.5rem)] leading-[0.9] tracking-[-0.01em]">AKUMA</div>
+          <Link to={slide.to} className="ak-btn-dark mt-2">{slide.cta}</Link>
         </div>
       </div>
     </section>
