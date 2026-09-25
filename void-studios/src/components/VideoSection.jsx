@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
+import ProductImage from './ProductImage'
 
-// Full-bleed video section (GENRAGE-style architecture). No asset yet —
-// shows a branded poster slot; drop an mp4 path in `src` when ready.
-export default function VideoSection({ src, poster, heading }) {
+// Campaign section. With a `banner` it shows the still artwork; with an
+// mp4 `src` it becomes a playable video (poster shows until play).
+export default function VideoSection({ src, poster, banner, heading }) {
   const videoRef = useRef(null)
   const [playing, setPlaying] = useState(false)
 
@@ -34,6 +35,8 @@ export default function VideoSection({ src, poster, heading }) {
               playsInline
               onClick={toggle}
             />
+          ) : banner ? (
+            <ProductImage src={banner} alt={heading || 'AKUMA campaign'} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-3">
               <span className="font-wordmark text-4xl uppercase tracking-wide text-ink/15">AKUMA</span>

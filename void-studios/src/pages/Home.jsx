@@ -77,8 +77,11 @@ export default function Home() {
       {/* 4 — collection list strip */}
       <CollectionList />
 
-      {/* 5 — video section (placeholder until campaign film) */}
-      <VideoSection heading="The Campaign" />
+      {/* 5 — campaign banner (still artwork until campaign film) */}
+      <VideoSection
+        heading="The Campaign"
+        banner="https://res.cloudinary.com/mak8wmjn/image/upload/f_auto,q_auto,w_1600/v1790335057/Untitled79_20260925163950.webp"
+      />
 
       {/* 6 — featured collection carousel: Just Dropped */}
       <section className="bg-bg-secondary py-16 sm:py-20">
