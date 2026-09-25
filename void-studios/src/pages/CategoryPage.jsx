@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ProductGrid from '../components/ProductGrid'
+import { SkeletonGrid } from '../components/Skeletons'
 import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 
@@ -90,11 +91,9 @@ export default function CategoryPage({ mode, id, apiLive }) {
       </div>
 
       <div className="ak-shell py-12">
-        {/* API still loading its first page — don't flash the empty state */}
+        {/* API still loading its first page — hold the grid's shape with skeletons */}
         {apiLive === null && products.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="font-wordmark text-2xl uppercase text-ink/25">Loading…</p>
-          </div>
+          <SkeletonGrid count={8} />
         ) : products.length ? (
           <ProductGrid products={products} />
         ) : (

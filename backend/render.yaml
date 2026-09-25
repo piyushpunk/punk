@@ -1,0 +1,72 @@
+# ── Render Blueprint ──────────────────────────────────────────────────────────
+# Provision/keep this service in sync from the Render dashboard:
+#   New → Blueprint → point at this repo → Render detects backend/render.yaml.
+# The web service name below is the default; Render will assign a URL like
+#   https://<service-name>.onrender.com  (e.g. https://punk-api.onrender.com)
+# Then set the sync:false env vars in the Render dashboard (Environment tab)
+# — secrets are never committed to this file.
+#
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web                      # a single web service (no workers/databases in this blueprint)
+    name: punk-api                 # change here AND in docs/render-migration.md if you rename
+    runtime: node                  # native Node runtime — no Docker needed
+    rootDir: backend               # blueprint lives at repo root, app lives in backend/
+    plan: free                     # free tier; upgrade to starter+ for zero spin-down
+    # Build & start (paths are relative to rootDir):
+    buildCommand: npm ci
+    startCommand: npm start
+    # Render injects PORT automatically; index.js reads it (falls back to 8000).
+    # Free instances spin down after ~15 min idle → first request wakes them
+    # (cold starts ~30–60s). The frontend should tolerate a slow first call.
+    healthCheckPath: /api/v1/health
+    autoDeploy: true               # deploy on every push to the tracked branch
+    envVars:
+      # ── Render-managed ────────────────────────────────────────────────────────
+      - key: NODE_VERSION          # pin Node so builds don't drift with Render images
+        value: 20.18.1
+      - key: NODE_ENV
+        value: production
+      # ── You must set these in the dashboard (sync:false = not managed here) ──
+      - key: MONGODB_URI           # same Atlas URI you used on Railway
+        sync: false
+      - key: ACCESS_TOKEN_SECRET
+        sync: false
+      - key: REFRESH_TOKEN_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # Razorpay — optional; without it checkout marks orders pending_payment
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      # SMTP password-reset emails — optional; logs to console when absent
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      # ── URLs — REPLACE <your-subdomain> after Render assigns the service URL ──
+      - key: CORS_ORIGIN           # comma-separated list of allowed browser origins
+        value: https://punkstudios.vercel.app
+        sync: false
+      - key: FRONTEND_URL          # password-reset links point here
+        value: https://punkstudios.vercel.app
+        sync: false
+      # Optional: keep cookies SameSite=lax if you later serve frontend + API
+      # from one domain; leave unset in production (defaults to SameSite=None).
+      # - key: COOKIE_SAMESITE
+      #   value: lax

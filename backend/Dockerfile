@@ -1,4 +1,4 @@
-# ── AKUMA API — Railway/any-Docker production image ──────────
+# ── AKUMA API — Render/any-Docker production image ───────
 FROM node:20-slim
 
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY . .
 
 ENV NODE_ENV=production
 
-# Railway injects the real PORT at runtime; this is documentation only.
+# Render injects the real PORT at runtime; this is documentation only.
 EXPOSE 8000
 
 CMD ["npm", "start"]

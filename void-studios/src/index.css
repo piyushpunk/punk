@@ -78,6 +78,13 @@ header:has(.nav-group:hover) .ak-nav-overlay {
   animation: ak-marquee-scroll 28s linear infinite;
 }
 
+/* skeleton placeholders — used by components/Skeletons.jsx while the
+   catalog/detail data loads. Deliberately static: no shimmer/motion. */
+.ak-skeleton {
+  background: var(--bg-secondary);
+  opacity: 0.65;
+}
+
 /* thin scrollbar to match the minimal look */
 * {
   scrollbar-width: thin;

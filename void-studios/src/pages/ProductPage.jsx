@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import ProductImage from '../components/ProductImage'
 import ProductCard from '../components/ProductCard'
+import { SkeletonProduct, SkeletonBlock } from '../components/Skeletons'
 import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 import { HeartIcon, BagIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/Icons'
@@ -65,11 +66,17 @@ export default function ProductPage() {
   })
 
   // While the API catalog is still loading, a direct visit to /product/:id
-  // would look like a 404 — show a loader instead of redirecting.
+  // would look like a 404 — hold the page's shape with skeletons instead.
   if (!product && apiLive === null) {
     return (
-      <div className="ak-shell py-32 text-center">
-        <p className="font-wordmark text-2xl uppercase text-ink/25">Loading…</p>
+      <div className="bg-bg-primary">
+        <div className="ak-shell py-8">
+          {/* breadcrumb placeholder keeps the header rhythm */}
+          <div className="mb-6">
+            <SkeletonBlock className="h-3 w-40" />
+          </div>
+          <SkeletonProduct />
+        </div>
       </div>
     )
   }
