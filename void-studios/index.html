@@ -61,6 +61,24 @@
       }
     </script>
 
+    <!-- Google Analytics 4 — set VITE_GA_MEASUREMENT_ID (e.g. G-XXXXXXXXXX)
+         in Vercel env vars and this loads automatically; without it, nothing
+         loads (no dead script, no console noise). -->
+    <script>
+      (function () {
+        var id = '%VITE_GA_MEASUREMENT_ID%';
+        if (!/^G-[A-Z0-9]+$/.test(id)) return; // unset/placeholder — GA not configured
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', id);
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" />
