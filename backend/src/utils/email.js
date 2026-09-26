@@ -41,6 +41,9 @@ export const sendEmail = async ({ to, subject, text, html }) => {
       connectionTimeout: 10_000,
       greetingTimeout: 10_000,
       socketTimeout: 15_000,
+      // Gmail sometimes needs a beat before TLS starts on 587 (STARTTLS);
+      // without this, first-connection TLS handshakes intermittently fail.
+      tls: { rejectUnauthorized: true },
     });
 
     console.log(
@@ -48,44 +51,37 @@ export const sendEmail = async ({ to, subject, text, html }) => {
     );
 
     // verify() fails fast with a clear auth/connection error instead of a
-    // timeout deep inside sendMail.
+    // timeout deep inside sendMail. Its failure is the diagnosis: ECONNREFUSED
+    // (blocked port), ETIMEDOUT (firewall), EAUTH (bad credentials/App Password).
     await transporter.verify();
 
-    // Send in the background with a cap — the HTTP response must never wait
-    // on the mail server. Callers get `delivered: false, reason: 'sending'
-    // continues in background' immediately; the send result lands in logs.
-    const sendPromise = transporter
-      .sendMail({
+    // Send with the same failure visibility — but let the send run to its own
+    // socket timeout (15s) instead of a hard 5s race: Gmail on a cold start
+    // often takes 6-9s, which the old race misreported as "not delivered"
+    // even when the mail WAS sent afterwards.
+    try {
+      await transporter.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to,
         subject,
         text,
         ...(html ? { html } : {}),
-      })
-      .then(() => {
-        console.log(`📧 Email sent to ${to}`);
-        return true;
-      })
-      .catch((err) => {
-        console.error(
-          "📧 [email] background send failed:",
-          err.message,
-          err.code ? `[code: ${err.code}]` : "",
-          err.response ? `[smtp: ${err.response}]` : ""
-        );
-        return false;
       });
-
-    // Race against a short cap so the endpoint answers quickly either way.
-    const ok = await Promise.race([
-      sendPromise,
-      new Promise((resolve) => setTimeout(() => resolve("timeout"), 5000)),
-    ]);
-
-    if (ok === "timeout") {
-      return { delivered: false, reason: "SMTP send still in progress (backgrounded)" };
+      console.log(`📧 Email sent to ${to}`);
+      return { delivered: true };
+    } catch (sendErr) {
+      console.error(
+        "📧 [email] send failed:",
+        sendErr.message,
+        sendErr.code ? `[code: ${sendErr.code}]` : "",
+        sendErr.response ? `[smtp: ${sendErr.response}]` : ""
+      );
+      return {
+        delivered: false,
+        reason: sendErr.response || sendErr.message || "send failed",
+        code: sendErr.code || null,
+      };
     }
-    return ok ? { delivered: true } : { delivered: false, reason: "send failed — see logs" };
   } catch (error) {
     console.error(
       "📧 [email] send failed:",
@@ -93,6 +89,10 @@ export const sendEmail = async ({ to, subject, text, html }) => {
       error.code ? `[code: ${error.code}]` : "",
       error.response ? `[smtp: ${error.response}]` : ""
     );
-    return { delivered: false, reason: error.message };
+    return {
+      delivered: false,
+      reason: error.response || error.message || "send failed",
+      code: error.code || null,
+    };
   }
 };

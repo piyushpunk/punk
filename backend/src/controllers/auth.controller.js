@@ -85,19 +85,23 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
+  // mailFailure surfaces the SMTP reason (e.g. EAUTH, ECONNREFUSED, 535) so
+  // the owner can diagnose from the API response alone — no secrets included.
   // No tokens on register — the session starts at activation/login, which is
   // the point of verifying the address.
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        { user: sanitizeUser(user), emailSent: mail.delivered },
-        mail.delivered
-          ? "Account created — check your email to activate it"
-          : "Account created, but the activation email could not be sent — use Resend on the verify page"
-      )
-    );
+  return res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        user: sanitizeUser(user),
+        emailSent: mail.delivered,
+        ...(mail.delivered ? {} : { mailFailure: mail.reason }),
+      },
+      mail.delivered
+        ? "Account created — check your email to activate it"
+        : "Account created, but the activation email could not be sent — use Resend on the verify page"
+    )
+  );
 });
 
 // ─── GET /auth/verify-email?token=… ──────────────────────────────────────────
@@ -147,7 +151,7 @@ const resendVerification = asyncHandler(async (req, res) => {
   const { mail } = await issueActivationEmail(user);
   if (!mail.delivered) {
     console.error(`[auth] Resent activation email NOT delivered to ${user.email} (${mail.reason}).`);
-    genericResponse.data = { delivered: false };
+    genericResponse.data = { delivered: false, mailFailure: mail.reason };
   } else {
     genericResponse.data = { delivered: true };
   }
@@ -304,11 +308,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
         "Set SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS to enable password resets."
     );
     // Non-production gets the token inline so the flow is testable without a
-    // mail server. Production relies on the email only.
+    // mail server. Production relies on the email only. mailFailure surfaces
+    // the SMTP reason for diagnosis (no secrets).
     if (process.env.NODE_ENV !== "production") {
-      genericResponse.data = { resetToken: rawToken, delivered: false };
+      genericResponse.data = { resetToken: rawToken, delivered: false, mailFailure: mail.reason };
     } else {
-      genericResponse.data = { delivered: false };
+      genericResponse.data = { delivered: false, mailFailure: mail.reason };
     }
   } else {
     genericResponse.data = { delivered: true };
