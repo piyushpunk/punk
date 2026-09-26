@@ -45,7 +45,7 @@ function Tile({ tile, index }) {
         shown ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
       }`}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-bg-secondary">
+      <div className="relative aspect-[3/4] overflow-hidden border border-line-soft bg-bg-secondary">
         <ProductImage
           src={tile.img}
           alt={tile.label}

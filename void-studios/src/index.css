@@ -5,9 +5,10 @@
 /* ------------------------------------------------------------------
    AKUMA design tokens — edit palette here; tailwind.config.js mirrors
    these values. The accent maroon is reserved for SALE signals only.
+   Palette: white canvas, ink text, maroon SALE accent.
 ------------------------------------------------------------------- */
 :root {
-  --bg-primary: #fde3cd;
+  --bg-primary: #ffffff;
   --bg-secondary: #ffffff;
   --bg-section-alt: #ffffff;
   --text-primary: #1b1815;

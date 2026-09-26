@@ -23,7 +23,7 @@ export default function VideoSection({ src, poster, banner, heading }) {
     <section className="bg-bg-primary py-16 sm:py-20">
       <div className="ak-shell">
         {heading && <h2 className="ak-section-title mb-8 text-center">{heading}</h2>}
-        <div className="relative aspect-video overflow-hidden bg-bg-secondary">
+        <div className="relative aspect-video overflow-hidden border border-line-soft bg-bg-secondary">
           {src ? (
             <video
               ref={videoRef}

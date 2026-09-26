@@ -9,9 +9,10 @@ export default function ProductImage({ src, alt, className = '', priority = fals
     // Sizing comes from the caller's className only — hardcoding h-full w-full
     // here overrode fixed-size thumbs (e.g. h-12 in the admin table), which
     // blew the placeholder up to full width and crushed adjacent table columns.
+    // Hairline border keeps white placeholders visible on the white canvas.
     return (
       <div
-        className={`flex flex-col items-center justify-center gap-2 bg-bg-secondary text-center ${className}`}
+        className={`flex flex-col items-center justify-center gap-2 border border-line-soft bg-bg-secondary text-center ${className}`}
         role="img"
         aria-label={alt}
       >
