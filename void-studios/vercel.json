@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/v1/(.*)", "destination": "https://punk-production-7266.up.railway.app/api/v1/$1" },
+    { "source": "/api/v1/(.*)", "destination": "https://punk-59vj.onrender.com/api/v1/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1,5 +1,11 @@
 # Migrating the API from Railway → Render
 
+> **✅ DONE — Sep 2026.** The API now lives at `https://punk-59vj.onrender.com`
+> (verified: `/health` returns current commit + SMTP configured). The frontend
+> rewrite points there (`void-studios/vercel.json` + `deploy.mjs`), and
+> `backend/railway.json` has been deleted. See `docs/infra.md` for the current
+> setup. The rest of this doc is kept for reference.
+
 The backend (`backend/`) is fully portable — it reads only standard env vars
 (`PORT`, `MONGODB_URI`, secrets) and has a health endpoint at
 `/api/v1/health`, which is what Render's health checks need. Nothing in the
