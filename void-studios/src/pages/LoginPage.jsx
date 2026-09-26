@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { api } from '../lib/api'
 import { useSeo } from '../lib/seo'
 
 export default function LoginPage() {
@@ -13,6 +14,8 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const [needActivate, setNeedActivate] = useState(false)
+  const [resendNote, setResendNote] = useState('')
 
   const [busy, setBusy] = useState(false)
 
@@ -27,9 +30,26 @@ export default function LoginPage() {
       toast(`Welcome back, ${user.name}`)
       navigate('/')
     } catch (err) {
+      if (err.status === 403 && /activate/i.test(err.message || '')) {
+        // Un-activated account — offer the resend path right here.
+        setNeedActivate(true)
+      } else {
+        setNeedActivate(false)
+      }
       setError(err.message || 'Login failed — check your credentials.')
     } finally {
       setBusy(false)
+    }
+
+  }
+
+  const resend = async () => {
+    setResendNote('')
+    try {
+      const data = await api.resendVerification(form.email)
+      setResendNote(data?.delivered === false ? 'Could not send right now — try again shortly.' : 'New activation link sent — check your inbox.')
+    } catch {
+      setResendNote('Could not send right now — try again shortly.')
     }
   }
 
@@ -74,6 +94,15 @@ export default function LoginPage() {
             </div>
 
             {error && <p className="text-[12px] font-medium text-accent">{error}</p>}
+
+            {needActivate && (
+              <div className="text-[12px] text-ink-soft">
+                <button type="button" onClick={resend} className="font-semibold text-ink underline underline-offset-4">
+                  Resend activation link
+                </button>
+                {resendNote && <p className="mt-1 text-ink">{resendNote}</p>}
+              </div>
+            )}
 
             <button type="submit" disabled={busy} className="ak-btn-dark w-full disabled:opacity-50">
               {busy ? 'Logging in…' : 'Log In'}

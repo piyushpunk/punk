@@ -42,6 +42,12 @@ export const forgotPasswordSchema = z.object({
   }),
 });
 
+export const resendVerificationSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email("valid email is required"),
+  }),
+});
+
 export const resetPasswordSchema = z.object({
   body: z.object({
     token: z.string().min(10, "reset token is required"),

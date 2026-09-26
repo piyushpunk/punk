@@ -68,6 +68,25 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // ─── Email activation ────────────────────────────────────────────────
+    // `isEmailVerified: false` blocks login until the emailed link is used.
+    // Hash-only storage mirrors the reset-token pattern: a DB leak can't
+    // produce usable activation links.
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    emailVerificationTokenHash: {
+      type: String,
+      select: false,
+      default: null,
+    },
+    emailVerificationExpires: {
+      type: Date,
+      select: false,
+      default: null,
+    },
     passwordResetTokenHash: {
       type: String,
       select: false,

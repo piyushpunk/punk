@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
+import { api } from '../lib/api'
 import { useSeo } from '../lib/seo'
 
 export default function RegisterPage() {
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '', terms: false })
   const [error, setError] = useState('')
+  const [pendingEmail, setPendingEmail] = useState(null) // set after signup → activation notice
 
   const [busy, setBusy] = useState(false)
 
@@ -27,8 +29,10 @@ export default function RegisterPage() {
     setError('')
     try {
       await register(form.name.trim(), form.email, form.password)
-      toast(`Welcome to AKUMA, ${form.name.split(' ')[0]}`)
-      navigate('/')
+      // Account exists but is locked until the emailed activation link is
+      // used — show the activation notice instead of logging straight in.
+      setPendingEmail(form.email)
+      toast('Account created — check your email to activate it')
     } catch (err) {
       setError(err.message || 'Could not create your account.')
     } finally {
@@ -54,11 +58,40 @@ export default function RegisterPage() {
     <div className="bg-bg-primary">
       <div className="ak-shell flex justify-center py-16 sm:py-20">
         <div className="w-full max-w-md border border-line-soft bg-white p-8 sm:p-10">
-          <h1 className="ak-section-title text-center">Create Account</h1>
+          <h1 className="ak-section-title text-center">{pendingEmail ? 'Check Your Email' : 'Create Account'}</h1>
           <p className="mt-2 text-center text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-            First access to limited drops
+            {pendingEmail ? 'One click to activate' : 'First access to limited drops'}
           </p>
 
+          {pendingEmail ? (
+            <div className="mt-8 space-y-4 text-center">
+              <p className="text-[13px] leading-relaxed">
+                We sent an activation link to <strong>{pendingEmail}</strong>.
+                Open it to activate your account — the link is valid for{' '}
+                <strong>24 hours</strong>.
+              </p>
+              <p className="text-[12px] text-ink-soft">
+                Didn&apos;t get it? Check spam, or{' '}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await api.resendVerification(pendingEmail)
+                      toast('Activation link sent again')
+                    } catch {
+                      toast('Could not resend — try again in a minute')
+                    }
+                  }}
+                  className="font-semibold text-ink underline underline-offset-4"
+                >
+                  resend it
+                </button>
+              </p>
+              <button type="button" onClick={() => navigate('/login')} className="ak-btn-outline w-full">
+                Go to Log In
+              </button>
+            </div>
+          ) : (
           <form onSubmit={submit} className="mt-8 space-y-5" noValidate>
             {field('reg-name', 'Name', 'text', { key: 'name', props: { autoComplete: 'name', placeholder: 'Your name' } })}
             {field('reg-email', 'Email', 'email', { key: 'email', props: { autoComplete: 'email', placeholder: 'you@example.com' } })}
@@ -90,6 +123,7 @@ export default function RegisterPage() {
               {busy ? 'Creating account…' : 'Create Account'}
             </button>
           </form>
+          )}
 
           <p className="mt-6 text-center text-[12px] text-ink-soft">
             Already have an account?{' '}

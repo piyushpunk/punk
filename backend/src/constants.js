@@ -63,3 +63,7 @@ export const COOKIE_OPTIONS = {
 };
 
 export const PASSWORD_RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
+
+// Activation link lifetime — long enough for a slow inbox, short enough to
+// be safe (a fresh link can be resent any time from the verify page).
+export const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;

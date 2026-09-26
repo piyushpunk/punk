@@ -92,6 +92,8 @@ export const api = {
   logout: () => request('/auth/logout', { method: 'POST' }),
   forgotPassword: (email) => request('/auth/forgot-password', { method: 'POST', body: { email } }),
   resetPassword: (token, newPassword) => request('/auth/reset-password', { method: 'POST', body: { token, newPassword } }),
+  verifyEmail: (token) => request(`/auth/verify-email?token=${encodeURIComponent(token)}`),
+  resendVerification: (email) => request('/auth/resend-verification', { method: 'POST', body: { email } }),
 
   // cart
   cart: () => request('/cart').then(normCart),

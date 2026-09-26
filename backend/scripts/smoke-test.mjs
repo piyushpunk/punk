@@ -42,6 +42,20 @@ const server = app.listen(0); // random free port
 await new Promise((resolve) => server.once("listening", resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
 
+// Activation links are emitted into the console when SMTP is unconfigured
+// (NODE_ENV=test → mail suppressed path logs the full text). Capture them so
+// the auth suite can complete the register → verify → login flow.
+const capturedVerifyTokens = [];
+{
+  const origLog = console.log.bind(console);
+  console.log = (...args) => {
+    const line = args.join(" ");
+    const m = line.match(/verify-email\?token=([a-f0-9]+)/);
+    if (m) capturedVerifyTokens.push(m[1]);
+    origLog(...args);
+  };
+}
+
 // ─── Tiny fetch helpers (cookie-jar aware) ──────────────────────────────────
 let passed = 0;
 let failed = 0;
@@ -87,12 +101,39 @@ await call("GET", "/api/v1/health", { expect: 200 });
 await call("GET", "/api/v1/nope", { expect: 404 });
 
 // ─── 2. Auth ─────────────────────────────────────────────────────────────────
+// Register no longer logs the user in — it issues an activation email and the
+// account stays locked until /auth/verify-email?token=… is used.
 const regRes = await call("POST", "/api/v1/auth/register", {
   body: { name: "Test User", email: "user@test.com", password: "password123" },
   expect: 201,
 });
-let userCookies = collectCookies(regRes);
-assert.ok(userCookies.includes("accessToken"), "register sets access cookie");
+assert.ok(regRes.body.message.includes("Account created"), "register returns activation message");
+passed += 1;
+
+// Unverified login must be blocked with 403 + EMAIL_NOT_VERIFIED code.
+const unverifiedLogin = await call("POST", "/api/v1/auth/login", {
+  body: { email: "user@test.com", password: "password123" },
+  expect: 403,
+});
+assert.equal(unverifiedLogin.body.code, "EMAIL_NOT_VERIFIED", "login blocked before activation");
+passed += 1;
+
+// Resend keeps the same no-leak envelope.
+await call("POST", "/api/v1/auth/resend-verification", {
+  body: { email: "user@test.com" },
+  expect: 200,
+});
+
+// Activate using the token captured from the suppressed-mail log output.
+const verifyToken = capturedVerifyTokens.at(-1);
+assert.ok(verifyToken, "activation token captured from mail output");
+const verifyRes = await call("GET", `/api/v1/auth/verify-email?token=${verifyToken}`, { expect: 200 });
+assert.equal(verifyRes.body.message, "Account activated — you can log in now", "verify-email activates");
+passed += 1;
+
+// Token is single-use — replay must fail.
+await call("GET", `/api/v1/auth/verify-email?token=${verifyToken}`, { expect: 400 });
+passed += 1;
 
 await call("POST", "/api/v1/auth/register", {
   body: { name: "Dup", email: "user@test.com", password: "password123" },
@@ -104,11 +145,14 @@ await call("POST", "/api/v1/auth/register", {
   expect: 422,
 });
 
+// Activated account can log in and get cookies.
 const loginRes = await call("POST", "/api/v1/auth/login", {
   body: { email: "user@test.com", password: "password123" },
   expect: 200,
 });
-userCookies = collectCookies(loginRes);
+let userCookies = collectCookies(loginRes);
+assert.ok(userCookies.includes("accessToken"), "login sets access cookie");
+passed += 1;
 
 await call("POST", "/api/v1/auth/login", {
   body: { email: "user@test.com", password: "wrong-password" },
@@ -116,11 +160,14 @@ await call("POST", "/api/v1/auth/login", {
 });
 
 // ─── Admin user (promote directly through the model) ─────────────────────────
+// isEmailVerified: true — model-created users bypass the register flow, so
+// without this the activation gate would lock the admin out of the suite.
 const adminUser = await User.create({
   name: "Admin",
   email: "admin@test.com",
   password: "adminpass123",
   role: "admin",
+  isEmailVerified: true,
 });
 const adminLogin = await call("POST", "/api/v1/auth/login", {
   body: { email: "admin@test.com", password: "adminpass123" },
@@ -333,11 +380,14 @@ passed += 1;
 await call("GET", "/api/v1/orders/me", { cookies: userCookies, expect: 200 });
 await call("GET", `/api/v1/orders/${order._id}`, { cookies: userCookies, expect: 200 });
 
-// Other user cannot read this order
+// Other user cannot read this order — this one activates properly through
+// the email flow (token captured from the suppressed-mail log).
+const user2RegCookiesBefore = capturedVerifyTokens.length;
 await call("POST", "/api/v1/auth/register", {
   body: { name: "Second", email: "user2@test.com", password: "password123" },
   expect: 201,
 });
+await call("GET", `/api/v1/auth/verify-email?token=${capturedVerifyTokens.at(-1)}`, { expect: 200 });
 const user2Login = await call("POST", "/api/v1/auth/login", {
   body: { email: "user2@test.com", password: "password123" },
   expect: 200,
@@ -365,7 +415,7 @@ await call("PATCH", `/api/v1/orders/admin/${order._id}/status`, {
 
 // ─── 9. Concurrent oversell protection (the crown jewel) ─────────────────────
 // skuL has stock 2. Two users race to buy 2 units each — exactly one wins.
-await User.create({ name: "Third", email: "user3@test.com", password: "password123" });
+await User.create({ name: "Third", email: "user3@test.com", password: "password123", isEmailVerified: true });
 await call("POST", "/api/v1/users/me/addresses", {
   cookies: user2Cookies,
   body: { line1: "9 Park St", city: "Mumbai", state: "MH", pincode: "400001" },

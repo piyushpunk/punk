@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   registerUser,
+  verifyEmail,
+  resendVerification,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -14,11 +16,14 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  resendVerificationSchema,
 } from "../validators/index.js";
 
 const router = Router();
 
 router.route("/register").post(validate(registerSchema), registerUser);
+router.route("/verify-email").get(verifyEmail);
+router.route("/resend-verification").post(validate(resendVerificationSchema), resendVerification);
 router.route("/login").post(validate(loginSchema), loginUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh").post(refreshAccessToken);
