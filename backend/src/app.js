@@ -3,8 +3,19 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import {
+  apiLimiter,
+  authLimiter,
+  emailLimiter,
+  writeLimiter,
+} from "./middlewares/rateLimiter.middleware.js";
 
 const app = express();
+
+// Railway/Render terminate TLS in front of the app — trust the proxy chain so
+// express-rate-limit keys on the real client IP from X-Forwarded-For, not the
+// proxy IP (which would rate-limit everyone as one user).
+app.set("trust proxy", 1);
 
 app.use(
   helmet({
@@ -40,7 +51,7 @@ app.use(cookieParser());
 import { attachHealthMeta } from "./utils/healthMeta.js";
 attachHealthMeta(app);
 
-// ─── API v1 routers ──────────────────────────────────────────────────────────
+// ─── API v1 routers (rate-limited) ──────────────────────────────────────────────────────────
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import categoryRouter from "./routes/category.routes.js";
@@ -53,6 +64,21 @@ import orderRouter from "./routes/order.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import inventoryRouter from "./routes/inventory.routes.js";
+
+// Global flood guard first — every /api/v1 call counts against 300/min.
+app.use("/api/v1", apiLimiter);
+
+// Email-sending endpoints: strictest tier (mail-bombing guard). Mounted on
+// the router path BEFORE authRouter so they win over the auth limiter.
+app.use("/api/v1/auth/register", emailLimiter);
+app.use("/api/v1/auth/forgot-password", emailLimiter);
+app.use("/api/v1/auth/resend-verification", emailLimiter);
+
+// Brute-force guard on the whole auth surface (login included).
+app.use("/api/v1/auth", authLimiter);
+
+// Scripted-spam guard on shopper write endpoints.
+app.use(["/api/v1/cart", "/api/v1/wishlist", "/api/v1/orders", "/api/v1/reviews"], writeLimiter);
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);

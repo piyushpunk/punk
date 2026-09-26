@@ -575,6 +575,28 @@ const ordersStillReadable = await call("GET", `/api/v1/orders/${order._id}`, {
 assert.equal(ordersStillReadable.body.data.order.items[0].name, "Oxford Shirt");
 passed += 1;
 
+// ─── 15. Rate limiting — a flood on one IP eventually draws a 429 ────────────
+// The email limiter is the tightest tier (5/hour in prod, 100 in test with
+// the 20× dev multiplier) — hammering resend-verification must trip it.
+let got429 = false;
+for (let i = 0; i < 150; i++) {
+  const res = await fetch(base + "/api/v1/auth/resend-verification", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email: "flood@test.com" }),
+  });
+  if (res.status === 429) {
+    got429 = true;
+    const j = await res.json().catch(() => null);
+    assert.equal(j?.message, "Too many email requests — try again in an hour.");
+    passed += 1;
+    break;
+  }
+}
+assert.ok(got429, "email limiter returns 429 under flood");
+// Health must stay un-limited/available after the flood on another path.
+await call("GET", "/api/v1/health", { expect: 200 });
+
 // ─── Wrap up ─────────────────────────────────────────────────────────────────
 console.log(`\n──────────────────────────────────────────`);
 console.log(`PASSED: ${passed} checks`);
