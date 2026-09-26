@@ -1,5 +1,30 @@
 # Migrating the API from Railway → Render
 
+## ⚠️ Email on Render: use Brevo, not SMTP (mandatory)
+
+Render **free web services block ALL outbound SMTP ports (25, 465, 587)** — see
+[Render's changelog](https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports).
+Symptom: every email reports `mailFailure: "Connection timeout"` after ~10s
+while `/health` shows SMTP fully configured. No SMTP-side fix is possible.
+
+**Fix (already in the code):** `backend/src/utils/email.js` prefers the
+**Brevo HTTP API** (`https://api.brevo.com/v3/smtp/email` — port 443, allowed)
+whenever `BREVO_API_KEY` is set. SMTP via nodemailer remains a fallback for
+local dev.
+
+Setup (~10 min, Brevo free tier = 300 emails/day):
+1. Create an account at https://www.brevo.com
+2. **Senders & IP** → add sender `akuma04313@gmail.com` → confirm the
+   verification email Brevo sends to that Gmail inbox
+3. **SMTP & API → API keys → Generate new key** (v3, `xkeysib-…`)
+4. Render service → **Environment**, add:
+   - `BREVO_API_KEY` = xkeysib-…
+   - `BREVO_SENDER_EMAIL` = akuma04313@gmail.com
+   - `BREVO_SENDER_NAME` = AKUMA
+5. **Manual Deploy → latest commit** so the new vars load, then verify:
+   `/api/v1/health` → `"smtp": { "transport": "brevo-http", ... }`, and a
+   fresh registration returns `"emailSent": true`.
+
 > **✅ DONE — Sep 2026.** The API now lives at `https://punk-59vj.onrender.com`
 > (verified: `/health` returns current commit + SMTP configured). The frontend
 > rewrite points there (`void-studios/vercel.json` + `deploy.mjs`), and

@@ -24,17 +24,22 @@ export function attachHealthMeta(app) {
 
   const bootedAt = new Date().toISOString();
 
-  // SMTP visibility: "forgot-password mail never arrives" is undiagnosable
-  // from the outside. This shows whether the SMTP_* vars actually reached
-  // the process (naming typos, vars on the wrong service, stale deploy)
-  // without leaking the secret — user is masked, password never echoed.
+  // Mail transport visibility: "activation/reset mail never arrives" is
+  // undiagnosable from the outside. This shows which transport is active
+  // and whether its vars actually reached the process (naming typos, vars
+  // on the wrong service, stale deploy) without leaking any secret.
   const maskUser = (u) => (u ? u.replace(/^(.{2}).*?(@.*)$/, "$1***$2") : null);
   const smtp = {
-    configured: Boolean(process.env.SMTP_HOST && process.env.SMTP_USER),
+    transport: process.env.BREVO_API_KEY ? "brevo-http" : "smtp",
+    brevoConfigured: Boolean(process.env.BREVO_API_KEY),
+    brevoSender: process.env.BREVO_SENDER_EMAIL || process.env.SMTP_FROM || null,
+    configured: Boolean(
+      process.env.BREVO_API_KEY || (process.env.SMTP_HOST && process.env.SMTP_USER)
+    ),
     host: process.env.SMTP_HOST || null,
-    port: Number(process.env.SMTP_PORT || 587),
+    port: process.env.BREVO_API_KEY ? 443 : Number(process.env.SMTP_PORT || 587),
     user: maskUser(process.env.SMTP_USER),
-    from: process.env.SMTP_FROM || process.env.SMTP_USER || null,
+    from: process.env.BREVO_SENDER_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER || null,
   };
 
   app.get("/api/v1/health", (_req, res) => {

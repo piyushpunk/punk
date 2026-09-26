@@ -48,7 +48,19 @@ services:
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
         sync: false
-      # SMTP password-reset emails — optional; logs to console when absent
+      # ── Email — Brevo HTTP API (REQUIRED on Render) ─────────────────────────
+      # Render free tier BLOCKS all outbound SMTP ports (25/465/587), so Gmail
+      # SMTP can never connect from here. Brevo sends over HTTPS:443 instead.
+      # Free tier: 300 emails/day. Get the key at brevo.com → SMTP & API → API keys.
+      # BREVO_SENDER_EMAIL must be a sender verified in your Brevo account.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        value: AKUMA
+        sync: false
+      # SMTP fallback (only useful for local dev — ignored once BREVO_API_KEY is set)
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
