@@ -113,7 +113,6 @@ export const api = {
     request('/payments/razorpay/order', { method: 'POST', body: { paymentId } }),
   // HMAC-SHA256(order_id|payment_id, KEY_SECRET) is verified server-side.
   verifyPayment: (body) => request('/payments/razorpay/verify', { method: 'POST', body }),
-  myOrders: () => request('/orders/me'),
   myOrder: (id) => request(`/orders/${id}`),
   cancelMyOrder: (id) => request(`/orders/${id}/cancel`, { method: 'POST' }),
 
@@ -139,6 +138,13 @@ export const api = {
     return upload(`/products/${id}/images`, fd)
   },
   adminRemoveImage: (id, url) => request(`/products/${id}/images`, { method: 'DELETE', body: { url } }),
+
+  // orders — customer + admin
+  myOrders: () => request('/orders/me'),
+  adminAllOrders: (params = {}) =>
+    request(`/orders/admin/all?${new URLSearchParams(params)}`),
+  adminUpdateOrderStatus: (id, status, note) =>
+    request(`/orders/admin/${id}/status`, { method: 'PATCH', body: { status, note } }),
 }
 
 export { BASE as API_BASE }
