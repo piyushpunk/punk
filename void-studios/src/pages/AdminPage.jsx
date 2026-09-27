@@ -36,6 +36,11 @@ export default function AdminPage() {
   useSeo({ title: 'Admin', path: '/admin', noindex: true })
   const { user, apiLive, boot, toast } = useStore()
 
+  // Declared BEFORE any effect that references it — the orders-loading
+  // effect below lists isAdmin in its deps, and using a const before its
+  // declaration line throws a TDZ ReferenceError that blanks the page.
+  const isAdmin = user?.role === 'admin'
+
   const [retrying, setRetrying] = useState(false)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState(null)
@@ -108,8 +113,6 @@ export default function AdminPage() {
   const [gen, setGen] = useState({ sizes: 'S, M, L', colors: 'Black', stock: 8, price: '' })
   const keyRef = useRef(1)
   const nextKey = () => `v${keyRef.current++}`
-
-  const isAdmin = user?.role === 'admin'
 
   const load = useCallback(async () => {
     setLoading(true)
