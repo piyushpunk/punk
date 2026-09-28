@@ -1,6 +1,6 @@
 // Multi-column info band (GENRAGE-style) — quick reassurance links.
 const COLS = [
-  { title: 'Easy 7-Day Exchange', copy: 'Size not right? Exchange within a week, no questions.' },
+  { title: 'Easy 3-Day Exchange', copy: 'Size not right? Exchange within 3 days of delivery — ₹199 fee, per our policy.' },
   { title: 'Talk to Us', copy: 'DM on Instagram or WhatsApp — a human replies, not a bot.' },
 ]
 

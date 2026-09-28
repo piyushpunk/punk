@@ -11,9 +11,10 @@ const STATUS_STEPS = ['confirmed', 'processing', 'shipped', 'delivered']
 
 const statusLabel = (s) => (s || '').replace(/_/g, ' ').toUpperCase()
 
-// ── 48-hour post-delivery exchange window ───────────────────────────────────
-const EXCHANGE_WINDOW_MS = 48 * 60 * 60 * 1000
-const EXCHANGE_WHATSAPP = 'https://wa.me/919318407257'
+// ── 3-day post-delivery exchange window ─────────────────────────────────
+const EXCHANGE_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
+// The Return & Exchange Policy directs exchange requests to this inbox.
+const EXCHANGE_EMAIL = 'akuma04313@gmail.com'
 
 function ExchangeWindowCard({ order }) {
   const [now, setNow] = useState(() => Date.now())
@@ -42,8 +43,11 @@ function ExchangeWindowCard({ order }) {
   const itemsLabel = (order.items || [])
     .map((it) => `${it.name} (${it.size})`)
     .join(', ')
-  const waLink = `${EXCHANGE_WHATSAPP}?text=${encodeURIComponent(
-    `Hi AKUMA! I'd like to request an exchange for order ${order.orderNumber} — ${itemsLabel}.`,
+  // Per the Return & Exchange Policy: email with order number + reason.
+  const mailLink = `mailto:${EXCHANGE_EMAIL}?subject=${encodeURIComponent(
+    `Exchange request — ${order.orderNumber}`,
+  )}&body=${encodeURIComponent(
+    `Hi AKUMA!\n\nI'd like to request an exchange for order ${order.orderNumber}.\n\nItems: ${itemsLabel}\nReason: \n\nThanks!`,
   )}`
 
   return (
@@ -52,13 +56,11 @@ function ExchangeWindowCard({ order }) {
       {expired ? (
         <>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-            The 48-hour exchange window for this order has closed. If something&apos;s wrong
-            with the piece, message us anyway — we&apos;ll make it right.
+            The 3-day exchange window for this order has closed. If something&apos;s wrong
+            with the piece, email us anyway — we&apos;ll make it right.
           </p>
           <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`mailto:${EXCHANGE_EMAIL}`}
             className="mt-4 inline-block text-[12px] text-accent underline underline-offset-4"
           >
             Contact support →
@@ -68,16 +70,11 @@ function ExchangeWindowCard({ order }) {
         <>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
             Size not right? Request an exchange within{' '}
-            <span className="font-semibold text-ink">{timeLeft}</span> of delivery — no
-            questions asked.
+            <span className="font-semibold text-ink">{timeLeft}</span> of delivery — unused,
+            unwashed, tags on. A ₹199 exchange fee applies per our policy.
           </p>
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ak-btn-dark mt-4 inline-block"
-          >
-            Request Exchange on WhatsApp
+          <a href={mailLink} className="ak-btn-dark mt-4 inline-block">
+            Request Exchange by Email
           </a>
         </>
       )}
