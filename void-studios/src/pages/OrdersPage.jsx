@@ -154,9 +154,6 @@ export default function OrdersPage() {
           </div>
         )}
 
-        {/* Store-wide order management (admins) sits under personal history */}
-        {user?.role === 'admin' && <AdminOrders />}
-
         {orders?.length > 0 && (
           <ul className="mt-8 max-w-3xl space-y-4">
             {orders.map((o) => (
@@ -184,6 +181,9 @@ export default function OrdersPage() {
             ))}
           </ul>
         )}
+
+        {/* Store-wide order management (admins) sits under personal history */}
+        {user?.role === 'admin' && <AdminOrders />}
       </div>
     </div>
   )
