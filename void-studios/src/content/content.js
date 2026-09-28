@@ -83,7 +83,7 @@ export const NAV_LINKS = [
   },
   { label: 'BASICS', to: '/basics' },
   { label: 'ACCESSORIES', to: '/accessories' },
-  { label: 'CLEARANCE', to: '/sale', dot: true },
+  // CLEARANCE removed — it linked to the same /sale page as SALE (duplicate)
   { label: 'SALE', to: '/sale', pill: true },
 ]
 
