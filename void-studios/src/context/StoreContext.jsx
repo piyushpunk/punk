@@ -41,10 +41,11 @@ export function StoreProvider({ children }) {
 
   const boot = useCallback(async () => {
     // Retry aggressively before declaring the API dead: the hosted backend
-    // (Render free tier) sleeps when idle and needs up to ~60s to wake, so a
-    // short probe would misreport a perfectly healthy API. Total patience:
-    // ~75s (6 attempts × ~12.5s request timeout + 1s gaps).
-    const attempts = 6
+    // (Render free tier) sleeps when idle and needs up to ~75s to wake.
+    // The fetch layer in api.js already absorbs cold-start 502/503s with
+    // its own ~80s retry budget, so a few boot attempts here are enough
+    // before we switch to the offline catalog.
+    const attempts = 3
     for (let i = 0; i < attempts; i++) {
       try {
         const data = await api.products({ limit: 60 })
@@ -286,6 +287,34 @@ export function StoreProvider({ children }) {
     setToasts((prev) => [...prev, { id, message }])
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 2800)
   }, [])
+
+  // --- auto-recovery -----------------------------------------------
+  // While in offline/mock mode, keep re-pinging the API in the background.
+  // Render's free tier sleeps after ~15 min idle, so a visitor who lands
+  // during a cold start currently sees the mock catalog until they reload.
+  // Poll every 20s instead and swap back to live data the moment the API
+  // answers — the existing apiLive effects then restore session, cart and
+  // wishlist automatically.
+  useEffect(() => {
+    if (apiLive !== false) return undefined
+    let cancelled = false
+    const timer = setInterval(async () => {
+      try {
+        const data = await api.products({ limit: 60 })
+        const list = (data.products || []).map(toUiProduct)
+        if (cancelled || !list.length) return
+        setCatalog(list)
+        setApiLive(true)
+        toast('Back online — live catalog loaded')
+      } catch {
+        /* still down — try again on the next tick */
+      }
+    }, 20000)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [apiLive, toast])
 
   const value = {
     apiLive,

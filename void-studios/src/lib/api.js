@@ -19,6 +19,36 @@ export class ApiUnavailable extends Error {
   }
 }
 
+// ==================================================================
+// Cold-start resilience — the backend runs on Render's free tier and
+// sleeps after ~15 min idle. While waking (up to ~75s) it answers
+// with 502/503 (Render's own error page) instead of our JSON. Retry
+// those transparently instead of letting one cold hit fail a call.
+// ==================================================================
+const COLD_START_STATUSES = new Set([502, 503, 504])
+const WAKE_RETRY_MAX = 5
+const WAKE_RETRY_WAIT_MS = 10_000
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+async function fetchWithWakeRetry(path, options) {
+  // attempt 1 is immediate; up to 4 more at 10s intervals ≈ 50s patience
+  for (let attempt = 1; ; attempt++) {
+    let res
+    try {
+      res = await fetch(`${BASE}${path}`, options)
+    } catch {
+      // network-level failure: retry on the same schedule unless this
+      // was the final attempt
+      if (attempt >= WAKE_RETRY_MAX) throw new ApiUnavailable()
+      await sleep(WAKE_RETRY_WAIT_MS)
+      continue
+    }
+    if (!COLD_START_STATUSES.has(res.status) || attempt >= WAKE_RETRY_MAX) return res
+    await sleep(WAKE_RETRY_WAIT_MS)
+  }
+}
+
 /**
  * request() — single fetch wrapper.
  * The backend answers `{ success, message, data }`; on success we return
@@ -26,17 +56,12 @@ export class ApiUnavailable extends Error {
  * `.errors` (zod field errors) so callers can show the server's message.
  */
 async function request(path, { method = 'GET', body } = {}) {
-  let res
-  try {
-    res = await fetch(`${BASE}${path}`, {
-      method,
-      credentials: 'include',
-      headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    })
-  } catch {
-    throw new ApiUnavailable()
-  }
+  const res = await fetchWithWakeRetry(path, {
+    method,
+    credentials: 'include',
+    headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  })
 
   return handle(res)
 }
@@ -64,16 +89,11 @@ async function handle(res) {
  * Content-Type/boundary; we must NOT set a JSON header here.
  */
 async function upload(path, formData) {
-  let res
-  try {
-    res = await fetch(`${BASE}${path}`, {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
-    })
-  } catch {
-    throw new ApiUnavailable()
-  }
+  const res = await fetchWithWakeRetry(path, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  })
   return handle(res)
 }
 
