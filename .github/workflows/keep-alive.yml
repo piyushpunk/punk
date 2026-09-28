@@ -1,0 +1,45 @@
+name: Keep backend awake
+
+# Render's free tier sleeps the service after ~15 minutes without
+# inbound traffic, and while waking (~25–75s) it answers 502s — which
+# surfaced to customers as failed logins and a mock product catalog.
+# Pinging /api/v1/health every 10 minutes keeps the service warm.
+#
+# Cost: one 5s ping every 10 min ≈ 7 CI minutes/month — free tier covers it.
+
+on:
+  schedule:
+    # Every 10 minutes. GitHub Actions cron is UTC; spacing matters more
+    # than the exact minute (note: scheduled runs can be delayed a few
+    # minutes during peak GitHub load — still far below the 15-min idle cut).
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {} # manual trigger from the Actions tab
+
+concurrency:
+  group: keep-alive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wake the backend
+        id: ping
+        run: |
+          set -e
+          for i in 1 2 3; do
+            code=$(curl -s -o /tmp/health.json -w '%{http_code}' --max-time 90 \
+              https://punk-59vj.onrender.com/api/v1/health || echo 000)
+            if [ "$code" = "200" ]; then
+              echo "Backend healthy: $(head -c 120 /tmp/health.json)"
+              exit 0
+            fi
+            echo "Attempt $i got HTTP $code — retrying in 30s"
+            sleep 30
+          done
+          echo "::warning::Backend still not answering after 3 attempts (last code $code)"
+          exit 0 # never fail loudly — this is a keep-alive, not a test
+
+      - name: Log commit the backend is running
+        if: steps.ping.outcome == 'success'
+        run: echo "Ping sent — see Render dashboard for the current commit"
