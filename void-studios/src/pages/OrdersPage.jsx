@@ -11,6 +11,80 @@ const STATUS_STEPS = ['confirmed', 'processing', 'shipped', 'delivered']
 
 const statusLabel = (s) => (s || '').replace(/_/g, ' ').toUpperCase()
 
+// ── 48-hour post-delivery exchange window ───────────────────────────────────
+const EXCHANGE_WINDOW_MS = 48 * 60 * 60 * 1000
+const EXCHANGE_WHATSAPP = 'https://wa.me/919318407257'
+
+function ExchangeWindowCard({ order }) {
+  const [now, setNow] = useState(() => Date.now())
+
+  // Keep the countdown honest while the page is open.
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(t)
+  }, [])
+
+  if (order.currentStatus !== 'delivered') return null
+  const deliveredAt = order.statusTimeline?.find((t) => t.status === 'delivered')?.timestamp
+  if (!deliveredAt) return null
+
+  const msLeft = new Date(deliveredAt).getTime() + EXCHANGE_WINDOW_MS - now
+  const expired = msLeft <= 0
+
+  let timeLeft = ''
+  if (!expired) {
+    const d = Math.floor(msLeft / 86400000)
+    const h = Math.floor((msLeft % 86400000) / 3600000)
+    const m = Math.floor((msLeft % 3600000) / 60000)
+    timeLeft = d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`
+  }
+
+  const itemsLabel = (order.items || [])
+    .map((it) => `${it.name} (${it.size})`)
+    .join(', ')
+  const waLink = `${EXCHANGE_WHATSAPP}?text=${encodeURIComponent(
+    `Hi AKUMA! I'd like to request an exchange for order ${order.orderNumber} — ${itemsLabel}.`,
+  )}`
+
+  return (
+    <div className={`border p-6 ${expired ? 'border-line-soft bg-bg-primary' : 'border-olive bg-olive/5'}`}>
+      <p className="text-[12px] font-semibold uppercase tracking-[0.24em]">Exchange window</p>
+      {expired ? (
+        <>
+          <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+            The 48-hour exchange window for this order has closed. If something&apos;s wrong
+            with the piece, message us anyway — we&apos;ll make it right.
+          </p>
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block text-[12px] text-accent underline underline-offset-4"
+          >
+            Contact support →
+          </a>
+        </>
+      ) : (
+        <>
+          <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+            Size not right? Request an exchange within{' '}
+            <span className="font-semibold text-ink">{timeLeft}</span> of delivery — no
+            questions asked.
+          </p>
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ak-btn-dark mt-4 inline-block"
+          >
+            Request Exchange on WhatsApp
+          </a>
+        </>
+      )}
+    </div>
+  )
+}
+
 // Timeline entries newest-last; the timeline shows the customer journey in order.
 function StatusTimeline({ order }) {
   const timeline = order.statusTimeline || []
@@ -297,6 +371,8 @@ export function OrderDetailPage() {
           </div>
 
           <aside className="h-fit space-y-6">
+            <ExchangeWindowCard order={order} />
+
             <div className="border border-line-soft bg-bg-primary p-6">
               <h2 className="text-[12px] font-semibold uppercase tracking-[0.24em]">Summary</h2>
               <dl className="mt-4 space-y-2 text-sm">
