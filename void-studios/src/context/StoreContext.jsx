@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { PRODUCTS, findProduct as mockFindProduct } from '../data/products'
-import { api, ApiUnavailable } from '../lib/api'
+import { api, ApiUnavailable, API_BASE } from '../lib/api'
 import {
   toUiProduct,
   toUiUser,
@@ -287,6 +287,19 @@ export function StoreProvider({ children }) {
     setToasts((prev) => [...prev, { id, message }])
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 2800)
   }, [])
+
+  // --- keep-alive pinger --------------------------------------------
+  // Render's free tier sleeps the backend after ~15 quiet minutes. While a
+  // customer has the store open, ping the health endpoint every 4 minutes
+  // so browsing sessions never drift into a cold start. Fire-and-forget:
+  // if the backend did sleep, the next ping doubles as the wake-up call.
+  useEffect(() => {
+    if (apiLive !== true) return undefined
+    const t = setInterval(() => {
+      fetch(`${API_BASE}/health`, { credentials: 'include' }).catch(() => {})
+    }, 4 * 60 * 1000)
+    return () => clearInterval(t)
+  }, [apiLive])
 
   // --- auto-recovery -----------------------------------------------
   // While in offline/mock mode, keep re-pinging the API in the background.
