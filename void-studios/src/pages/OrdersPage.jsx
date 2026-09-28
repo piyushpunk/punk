@@ -47,7 +47,7 @@ function ExchangeWindowCard({ order }) {
   )}`
 
   return (
-    <div className={`border p-6 ${expired ? 'border-line-soft bg-bg-primary' : 'border-olive bg-olive/5'}`}>
+    <div className={`mt-6 border p-6 ${expired ? 'border-line-soft bg-bg-primary' : 'border-olive bg-olive/5'}`}>
       <p className="text-[12px] font-semibold uppercase tracking-[0.24em]">Exchange window</p>
       {expired ? (
         <>
@@ -340,6 +340,10 @@ export function OrderDetailPage() {
           Placed {new Date(order.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
         </p>
 
+        {/* Delivered? The exchange CTA is the most actionable thing on the
+            page — pin it right under the header, above the fold. */}
+        <ExchangeWindowCard order={order} />
+
         <div className="mt-8 grid gap-10 lg:grid-cols-[3fr_2fr]">
           <div>
             <h2 className="text-[12px] font-semibold uppercase tracking-[0.24em]">Items</h2>
@@ -371,8 +375,6 @@ export function OrderDetailPage() {
           </div>
 
           <aside className="h-fit space-y-6">
-            <ExchangeWindowCard order={order} />
-
             <div className="border border-line-soft bg-bg-primary p-6">
               <h2 className="text-[12px] font-semibold uppercase tracking-[0.24em]">Summary</h2>
               <dl className="mt-4 space-y-2 text-sm">
