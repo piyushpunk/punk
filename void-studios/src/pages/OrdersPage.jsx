@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 import { api } from '../lib/api'
+import AdminOrders from '../components/AdminOrders'
 
 const fmt = (n) => `₹${Number(n).toLocaleString('en-IN')}`
 
@@ -152,6 +153,9 @@ export default function OrdersPage() {
             <Link to="/new-arrivals" className="ak-btn-dark mt-6">Shop New Arrivals</Link>
           </div>
         )}
+
+        {/* Store-wide order management (admins) sits under personal history */}
+        {user?.role === 'admin' && <AdminOrders />}
 
         {orders?.length > 0 && (
           <ul className="mt-8 max-w-3xl space-y-4">
