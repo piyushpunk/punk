@@ -22,6 +22,7 @@ import WishlistPage from './pages/WishlistPage'
 import OrdersPage, { OrderDetailPage } from './pages/OrdersPage'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
+import SiteMediaPage from './pages/SiteMediaPage'
 import SearchPage from './pages/SearchPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TermsPage from './pages/TermsPage'
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/orders/:id" element={<OrderDetailPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/site-media" element={<SiteMediaPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
