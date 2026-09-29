@@ -26,7 +26,10 @@ export class ApiUnavailable extends Error {
 // those transparently instead of letting one cold hit fail a call.
 // ==================================================================
 const COLD_START_STATUSES = new Set([502, 503, 504])
-const WAKE_RETRY_MAX = 5
+// Render cold boots measured 22-75s, so ~50s of retries still let 502s
+// leak through to customers. Each retry waits 10s, and 1 immediate + 12
+// retries ≈ 2 full minutes of patience — every wake fits comfortably.
+const WAKE_RETRY_MAX = 13
 const WAKE_RETRY_WAIT_MS = 10_000
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))

@@ -1,18 +1,25 @@
 name: Keep backend awake
 
-# Render's free tier sleeps the service after ~15 minutes without
-# inbound traffic, and while waking (~25–75s) it answers 502s — which
-# surfaced to customers as failed logins and a mock product catalog.
-# Pinging /api/v1/health every 10 minutes keeps the service warm.
+# Render's free tier sleeps the service after ~15 minutes without inbound
+# traffic, and while waking (~25-75s) it answers 502s — which customers saw
+# as failed logins and a mock product catalog.
 #
-# Cost: one 5s ping every 10 min ≈ 7 CI minutes/month — free tier covers it.
+# GitHub's scheduled-workflow queue can delay cron runs by many minutes —
+# the original */10 cron actually averaged one run every ~10 HOURS, far too
+# sparse to hold Render warm. So each run now STAYS ALIVE for ~5h45m,
+# pinging /health every 4 minutes, and a single hourly cron hands the baton
+# to the next runner before this one hits GitHub's 6h job ceiling. One
+# delayed trigger only shortens the handover overlap, never the coverage.
+#
+# Cost (public repo): ~345 min per slot — Actions minutes are free on
+# public repositories.
 
 on:
   schedule:
-    # Every 10 minutes. GitHub Actions cron is UTC; spacing matters more
-    # than the exact minute (note: scheduled runs can be delayed a few
-    # minutes during peak GitHub load — still far below the 15-min idle cut).
-    - cron: '*/10 * * * *'
+    # Hourly handover: each runner covers ~5h45m, so consecutive slots
+    # overlap and one late/missed trigger still leaves the previous runner
+    # holding the line. Off the :00 stampede minute on purpose.
+    - cron: '10 * * * *'
   workflow_dispatch: {} # manual trigger from the Actions tab
 
 concurrency:
@@ -23,23 +30,27 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Wake the backend
+      - name: Hold the backend warm
         id: ping
+        timeout-minutes: 345 # stay clear of the 6h job ceiling
         run: |
-          set -e
-          for i in 1 2 3; do
+          set -u
+          END=$(( $(date +%s) + 337 * 60 )) # stop before the step timeout
+          NEXT=$(( $(date +%s) + 15 ))      # first ping almost immediately
+          while [ "$(date +%s)" -lt "$END" ]; do
+            WAIT=$(( NEXT - $(date +%s) )); [ "$WAIT" -lt 5 ] && WAIT=5
+            sleep "$WAIT"
             code=$(curl -s -o /tmp/health.json -w '%{http_code}' --max-time 90 \
               https://punk-59vj.onrender.com/api/v1/health || echo 000)
             if [ "$code" = "200" ]; then
-              echo "Backend healthy: $(head -c 120 /tmp/health.json)"
-              exit 0
+              echo "$(date -u +%H:%M:%SZ) healthy $(head -c 80 /tmp/health.json)"
+            else
+              echo "::warning::$(date -u +%H:%M:%SZ) ping got HTTP $code — cold/waking"
             fi
-            echo "Attempt $i got HTTP $code — retrying in 30s"
-            sleep 30
+            NEXT=$(( $(date +%s) + 240 ))
           done
-          echo "::warning::Backend still not answering after 3 attempts (last code $code)"
-          exit 0 # never fail loudly — this is a keep-alive, not a test
+          echo "Shift over — the next hourly runner has the watch."
 
       - name: Log commit the backend is running
         if: steps.ping.outcome == 'success'
-        run: echo "Ping sent — see Render dashboard for the current commit"
+        run: echo "Ping shift done — see Render dashboard for the current commit"
