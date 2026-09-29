@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /account
 Disallow: /reset-password
 
-Sitemap: https://punkstudios.vercel.app/sitemap.xml
+Sitemap: https://akuma-store.vercel.app/sitemap.xml

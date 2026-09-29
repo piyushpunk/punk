@@ -4,7 +4,7 @@
 
 ## 1. Introduction
 
-AKUMA operates the website https://punkstudios.vercel.app , an online store for streetwear and apparel based in India. We are AKUMA, registered in India. 
+AKUMA operates the website https://akuma-store.vercel.app , an online store for streetwear and apparel based in India. We are AKUMA, registered in India. 
 
 This Privacy Policy explains what personal information we collect when you visit the Site, create an account, shop with us, sign up for our newsletter, or contact us — and how we use, share, and protect that information. It applies to all visitors and customers of the Site.
 

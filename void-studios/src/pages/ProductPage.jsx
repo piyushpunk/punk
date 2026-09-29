@@ -56,7 +56,7 @@ export default function ProductPage() {
         availability: product.inStock
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
-        url: `https://punkstudios.vercel.app${productHref(product)}`,
+        url: `https://akuma-store.vercel.app${productHref(product)}`,
       },
     }
   }, [product])

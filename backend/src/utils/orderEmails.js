@@ -3,7 +3,7 @@
  * Every email uses FRONTEND_URL for links so they work in production and dev.
  */
 
-const FRONTEND = () => process.env.FRONTEND_URL || "https://punkstudios.vercel.app";
+const FRONTEND = () => process.env.FRONTEND_URL || "https://akuma-store.vercel.app";
 
 const money = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 

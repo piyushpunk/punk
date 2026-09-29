@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 // doesn't waste crawl budget or rank shell pages. `schema` accepts JSON-LD
 // objects, injected once per page render.
 
-const ORIGIN = 'https://punkstudios.vercel.app'
+const ORIGIN = 'https://akuma-store.vercel.app'
 
 function upsertMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -76,7 +76,7 @@ export function useSeo({ title, description, path = '', noindex = false, schema 
         '@type': 'Organization',
         name: 'AKUMA',
         url: ORIGIN,
-        logo: 'https://punkstudios.vercel.app/assets/brand/logo-black.png',
+        logo: 'https://akuma-store.vercel.app/assets/brand/logo-black.png',
         email: 'akuma04313@gmail.com',
         telephone: '+91-9318407257',
         address: { '@type': 'PostalAddress', addressCountry: 'IN', addressRegion: 'Delhi' },
