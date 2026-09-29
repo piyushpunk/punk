@@ -66,7 +66,7 @@ export const NAV_LINKS = [
       { label: 'TANK TOPS', to: '/tops/tank-tops' },
     ],
     viewAll: '/tops',
-    promo: { title: 'The Hoodie Edit', img: '/assets/mega/hoodies.jpg' },
+    promo: { title: 'The Tee Edit', img: '/assets/mega/tees.jpg' },
   },
   {
     label: 'BOTTOMS',
