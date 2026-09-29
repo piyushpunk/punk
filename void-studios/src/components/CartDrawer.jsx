@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useStore } from '../context/StoreContext'
 import ProductImage from './ProductImage'
 import { CloseIcon, PlusIcon, MinusIcon, TrashIcon, BagIcon } from './Icons'
+import { productHref } from '../lib/adapter'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
@@ -60,7 +61,7 @@ export default function CartDrawer() {
             <ul className="flex-1 divide-y divide-line-soft overflow-y-auto px-6">
               {cartLines.map((l) => (
                 <li key={lineKey(l)} className="flex gap-4 py-4">
-                  <Link to={`/product/${l.productId}`} onClick={() => setCartOpen(false)} className="w-20 shrink-0">
+                  <Link to={productHref(l)} onClick={() => setCartOpen(false)} className="w-20 shrink-0">
                     <div className="aspect-[4/5] bg-bg-primary">
                       <ProductImage src={l.product.images[0]} alt={l.product.name} className="h-full w-full object-cover" />
                     </div>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import ProductImage from './ProductImage'
 import { HeartIcon, BagIcon } from './Icons'
 import { useStore } from '../context/StoreContext'
+import { productHref } from '../lib/adapter'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
@@ -20,7 +21,7 @@ export default function ProductCard({ product }) {
   return (
     <div className="group relative flex flex-col">
       <div className="relative overflow-hidden bg-bg-primary">
-        <Link to={`/product/${product.id}`} aria-label={product.name}>
+        <Link to={productHref(product)} aria-label={product.name}>
           <div className="aspect-[4/5] w-full">
             <ProductImage
               src={product.images[0]}
@@ -79,7 +80,7 @@ export default function ProductCard({ product }) {
       <div className="flex items-start justify-between gap-3 pt-3">
         <div>
           <Link
-            to={`/product/${product.id}`}
+            to={productHref(product)}
             className="text-[13px] font-medium tracking-wide text-ink hover:underline hover:decoration-accent hover:underline-offset-4"
           >
             {product.name}

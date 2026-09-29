@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams, Link, Navigate } from 'react-router-dom'
+import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
 import ProductImage from '../components/ProductImage'
 import ProductCard from '../components/ProductCard'
 import { SkeletonProduct, SkeletonBlock } from '../components/Skeletons'
 import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
+import { productHref } from '../lib/adapter'
 import { HeartIcon, BagIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/Icons'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
 export default function ProductPage() {
   const { productId } = useParams()
+  const navigate = useNavigate()
   const { catalog, apiLive, addToCart, toggleWishlist, wishlist, toast, setCartOpen } = useStore()
-  const product = catalog.find((p) => p.id === productId)
+  // Accept BOTH URL styles: the pretty slug (/product/thorn-spine) and the
+  // legacy Mongo id (/product/6ab8d721…) so old shared links keep working.
+  const product = catalog.find((p) => p.id === productId || p.slug === productId)
 
   const [size, setSize] = useState(null)
   const [color, setColor] = useState(null)
@@ -52,7 +56,7 @@ export default function ProductPage() {
         availability: product.inStock
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
-        url: `https://punkstudios.vercel.app/product/${product.id}`,
+        url: `https://punkstudios.vercel.app${productHref(product)}`,
       },
     }
   }, [product])
@@ -61,9 +65,18 @@ export default function ProductPage() {
     description: product
       ? `${product.name} — ₹${(product.salePrice ?? product.price).toLocaleString('en-IN')}. Heavyweight AKUMA streetwear. Limited drops, no restocks.`
       : 'AKUMA product',
-    path: product ? `/product/${product.id}` : '',
+    path: product ? productHref(product) : '',
     schema: productSchema,
   })
+
+  // Canonicalize old-style id URLs to the pretty slug — keeps one URL per
+  // product for SEO and makes shared links human-readable. Runs after the
+  // catalog resolves (skipped while loading or when truly not found).
+  useEffect(() => {
+    if (product && product.slug && productId !== product.slug) {
+      navigate(`/product/${product.slug}`, { replace: true })
+    }
+  }, [product, productId, navigate])
 
   // While the API catalog is still loading, a direct visit to /product/:id
   // would look like a 404 — hold the page's shape with skeletons instead.

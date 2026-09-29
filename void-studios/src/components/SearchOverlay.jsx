@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CloseIcon, SearchIcon } from './Icons'
 import { useStore } from '../context/StoreContext'
+import { productHref } from '../lib/adapter'
 
 // Fullscreen search overlay. Typing filters the catalog live;
 // submitting routes to /search?q=… for the full results page.
@@ -69,7 +70,7 @@ export default function SearchOverlay({ open, onClose }) {
                   type="button"
                   className="flex w-full items-center justify-between py-3 text-left text-sm hover:opacity-60"
                   onClick={() => {
-                    navigate(`/product/${p.id}`)
+                    navigate(productHref(p))
                     onClose()
                   }}
                 >

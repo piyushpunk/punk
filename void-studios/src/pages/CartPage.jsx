@@ -5,6 +5,7 @@ import { useSeo } from '../lib/seo'
 import ProductImage from '../components/ProductImage'
 import { BagIcon, TrashIcon, PlusIcon, MinusIcon } from '../components/Icons'
 import { PROMO_CODES, SHIPPING_FLAT_RATE } from '../content/content'
+import { productHref } from '../lib/adapter'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
@@ -55,7 +56,7 @@ export default function CartPage() {
           <ul className="divide-y divide-line-soft border-y border-line-soft">
             {cartLines.map((l) => (
               <li key={`${l.productId}-${l.size}-${l.color}`} className="flex gap-5 py-6">
-                <Link to={`/product/${l.productId}`} className="w-24 shrink-0 sm:w-28">
+                <Link to={productHref(l)} className="w-24 shrink-0 sm:w-28">
                   <div className="aspect-[4/5] bg-bg-primary">
                     <ProductImage src={l.product.images[0]} alt={l.product.name} className="h-full w-full object-cover" />
                   </div>
@@ -63,7 +64,7 @@ export default function CartPage() {
                 <div className="flex flex-1 flex-col">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <Link to={`/product/${l.productId}`} className="text-sm font-medium hover:underline hover:underline-offset-4">
+                      <Link to={productHref(l)} className="text-sm font-medium hover:underline hover:underline-offset-4">
                         {l.product.name}
                       </Link>
                       <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-ink-soft">

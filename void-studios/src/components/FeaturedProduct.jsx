@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import ProductImage from './ProductImage'
 import { useStore } from '../context/StoreContext'
 import { BagIcon, HeartIcon } from './Icons'
+import { productHref } from '../lib/adapter'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
 
@@ -27,7 +28,7 @@ export default function FeaturedProduct({ product }) {
           Piece of the drop
         </p>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <Link to={`/product/${product.id}`} className="block">
+          <Link to={productHref(product)} className="block">
             <div className="aspect-[4/5] bg-bg-primary">
               <ProductImage src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
             </div>
@@ -68,7 +69,7 @@ export default function FeaturedProduct({ product }) {
               </button>
             </div>
 
-            <Link to={`/product/${product.id}`} className="mt-4 inline-block text-[11px] uppercase tracking-[0.2em] text-ink-soft underline underline-offset-4 hover:text-ink">
+            <Link to={productHref(product)} className="mt-4 inline-block text-[11px] uppercase tracking-[0.2em] text-ink-soft underline underline-offset-4 hover:text-ink">
               Full details
             </Link>
           </div>

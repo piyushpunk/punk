@@ -67,6 +67,7 @@ export function toUiCartLines(items = [], products = []) {
     const variant = product?.variants?.find((v) => v.sku === it.sku)
     return {
       productId: it.product?._id || it.product,
+      slug: product?.slug,
       sku: it.sku,
       size: variant?.size ?? '',
       color: variant?.color ?? '',
@@ -81,3 +82,14 @@ export function toUiCartLines(items = [], products = []) {
 /** Wishlist payloads are id arrays or populated docs — normalize to ids. */
 export const toUiWishlistIds = (arr = []) =>
   arr.map((x) => (typeof x === 'object' && x !== null ? x._id : x))
+
+/**
+ * Canonical URL path for a product — the slug when available
+ * (/product/thorn-spine), falling back to the Mongo id so cart/wishlist
+ * lines (productId field) and old shared links keep working. Accepts a
+ * UI product, a cart/wishlist line, or a bare id string.
+ */
+export const productHref = (p) => {
+  const ident = p?.slug ?? p?.id ?? p?.productId ?? (typeof p === 'string' ? p : '')
+  return `/product/${ident}`
+}
