@@ -13,7 +13,6 @@ export const BRAND = {
 }
 
 export const ANNOUNCEMENTS = [
-  'FLAT SHIPPING ₹49',
   'NEW DROP LIVE NOW',
   'LIMITED UNITS — NO RESTOCKS',
 ]
@@ -23,7 +22,6 @@ export const TRUST_BADGES = ['SHIPS FAST', 'LIMITED DROPS', 'NO RESTOCKS']
 // Scrolling marquee strips (GENRAGE-style architecture, AKUMA copy)
 export const MARQUEE_PRIMARY = [
   'NO RESTOCKS',
-  'FLAT SHIPPING ₹49 — ALWAYS',
   'NEW DROP LIVE NOW',
 ]
 export const MARQUEE_SECONDARY = [
