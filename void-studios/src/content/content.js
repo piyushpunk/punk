@@ -66,7 +66,7 @@ export const NAV_LINKS = [
       { label: 'TANK TOPS', to: '/tops/tank-tops' },
     ],
     viewAll: '/tops',
-    promo: { title: 'The Tee Edit', img: '/assets/mega/tees.jpg' },
+    promo: { title: 'The Tee Edit', mediaKey: 'mega-tops' },
   },
   {
     label: 'BOTTOMS',
@@ -77,7 +77,7 @@ export const NAV_LINKS = [
       { label: 'SHORTS', to: '/bottoms/shorts' },
     ],
     viewAll: '/bottoms',
-    promo: { title: 'Denim & Cargos', img: '/assets/mega/bottoms.jpg' },
+    promo: { title: 'Denim & Cargos', mediaKey: 'mega-bottoms' },
   },
   { label: 'BASICS', to: '/basics' },
   { label: 'ACCESSORIES', to: '/accessories' },
@@ -119,3 +119,33 @@ export const PROMO_CODES = {
 
 export const FREE_SHIPPING_THRESHOLD = 0 // 0 = no free tier — flat ₹49 on every order (must match backend)
 export const SHIPPING_FLAT_RATE = 49 // ₹ flat, charged whenever the bag has items (must match backend SHIPPING_FEE)
+
+// ==================================================================
+// Admin-managed site media — fixed image slots the owner can replace
+// from Admin → Site Media without a code change (backend: SiteMedia
+// collection, uploaded to Cloudinary). MUST stay in sync with
+// SITE_MEDIA_KEYS in backend/src/validators/index.js.
+// ==================================================================
+export const SITE_MEDIA_DEFS = {
+  hero: HERO_SLIDES[0]?.src || '',
+  campaign:
+    'https://res.cloudinary.com/mak8wmjn/image/upload/f_auto,q_auto,w_1600/v1790335057/Untitled79_20260925163950.webp',
+  editorial:
+    'https://res.cloudinary.com/mak8wmjn/image/upload/f_auto,q_auto,w_1400/v1790493830/archive.webp',
+  'mega-tops': '/assets/mega/tees.jpg',
+  'mega-bottoms': '/assets/mega/bottoms.jpg',
+}
+
+// Slot metadata for the admin manager UI (label + a hint about placement).
+export const SITE_MEDIA_SLOTS = [
+  { key: 'hero', label: 'Hero banner', hint: 'Full-width homepage banner (16:9 works best)' },
+  { key: 'campaign', label: 'Campaign banner', hint: '“The Campaign” section on the homepage' },
+  { key: 'editorial', label: 'Editorial — From the Archive', hint: 'Image beside the archive story' },
+  { key: 'mega-tops', label: 'Menu tile — TOPS', hint: 'Promo tile in the TOPS dropdown' },
+  { key: 'mega-bottoms', label: 'Menu tile — BOTTOMS', hint: 'Promo tile in the BOTTOMS dropdown' },
+]
+
+/** Admin override (siteMedia map from the API) wins; built-in default falls through. */
+export function resolveMedia(media, key) {
+  return media?.[key] || SITE_MEDIA_DEFS[key] || ''
+}

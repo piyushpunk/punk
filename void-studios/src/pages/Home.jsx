@@ -10,7 +10,7 @@ import EditorialSplit from '../components/EditorialSplit'
 import FeaturedProduct from '../components/FeaturedProduct'
 import InfoColumns from '../components/InfoColumns'
 import { HOME_SECTIONS } from '../data/products'
-import { FEATURED_PRODUCT_ID } from '../content/content'
+import { FEATURED_PRODUCT_ID, resolveMedia } from '../content/content'
 import { useStore } from '../context/StoreContext'
 
 import { useSeo } from '../lib/seo'
@@ -167,7 +167,7 @@ export default function Home() {
       'AKUMA is an Indian streetwear label — heavyweight tees, limited drops, no restocks. Shop the latest drop before it sells out.',
     path: '/',
   })
-  const { catalog, apiLive } = useStore()
+  const { catalog, apiLive, siteMedia } = useStore()
 
   const featured = catalog.filter((p) => p.collections?.includes('top-picks'))
   const justDropped =
@@ -192,7 +192,7 @@ export default function Home() {
       {/* 5 — campaign banner (still artwork until campaign film) */}
       <VideoSection
         heading="The Campaign"
-        banner="https://res.cloudinary.com/mak8wmjn/image/upload/f_auto,q_auto,w_1600/v1790335057/Untitled79_20260925163950.webp"
+        banner={resolveMedia(siteMedia, 'campaign')}
       />
 
       {/* 6 — featured collection carousel: Just Dropped */}
@@ -208,8 +208,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7 — editorial split */}
-      <EditorialSplit {...EDITORIAL} flip />
+      {/* 7 — editorial split (image is admin-overridable via Site Media) */}
+      <EditorialSplit {...EDITORIAL} img={resolveMedia(siteMedia, 'editorial')} flip />
 
       {/* 8 — featured collection carousel: Top Picks */}
       <section className="bg-bg-primary py-16 sm:py-20">

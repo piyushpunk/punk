@@ -64,6 +64,7 @@ import orderRouter from "./routes/order.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import inventoryRouter from "./routes/inventory.routes.js";
+import siteMediaRouter from "./routes/siteMedia.routes.js";
 
 // Global flood guard first — every /api/v1 call counts against 300/min.
 app.use("/api/v1", apiLimiter);
@@ -92,6 +93,7 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/admin/inventory", inventoryRouter);
+app.use("/api/v1/site-media", siteMediaRouter);
 
 // 404 for unknown API routes — a JSON response, not an HTML error page.
 app.use((_req, res) => {

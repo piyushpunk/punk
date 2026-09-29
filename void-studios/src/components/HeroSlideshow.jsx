@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
-import { HERO_SLIDES } from '../content/content'
+import { HERO_SLIDES, resolveMedia } from '../content/content'
 import ProductImage from './ProductImage'
+import { useStore } from '../context/StoreContext'
 
 // Static hero banner — single full-width image (no carousel: no autoplay,
-// no dots, no arrows). Overlay content (tagline / wordmark / CTA) preserved.
-// To swap the artwork later, change HERO_SLIDES[0].src in content/content.js.
+// no dots, no arrows). Artwork comes from the admin Site Media override
+// when set, otherwise the built-in default in content.js.
 export default function HeroSlideshow() {
+  const { siteMedia } = useStore()
   const slide = HERO_SLIDES[0]
   if (!slide) return null
 
@@ -20,7 +22,7 @@ export default function HeroSlideshow() {
             overlay content for flex space — in-flow images squeeze the
             layout and shove the text sideways) --- */}
         <div className="absolute inset-0">
-          <ProductImage src={slide.src} alt="AKUMA" priority className="h-full w-full object-cover" />
+          <ProductImage src={resolveMedia(siteMedia, 'hero')} alt="AKUMA" priority className="h-full w-full object-cover" />
         </div>
 
         {/* --- overlay content: tagline chip and wordmark removed by owner

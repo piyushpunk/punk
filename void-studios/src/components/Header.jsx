@@ -5,7 +5,7 @@ import SearchOverlay from './SearchOverlay'
 import {
   SearchIcon, UserIcon, HeartIcon, BagIcon, MenuIcon, CloseIcon, ChevronDownIcon,
 } from './Icons'
-import { NAV_LINKS } from '../content/content'
+import { NAV_LINKS, resolveMedia } from '../content/content'
 import { useStore } from '../context/StoreContext'
 
 const iconBtnBase =
@@ -28,7 +28,7 @@ function CountBadge({ count, dark = false }) {
 }
 
 export default function Header() {
-  const { user, cartCount, wishlist, setCartOpen } = useStore()
+  const { user, cartCount, wishlist, setCartOpen, siteMedia } = useStore()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [headHover, setHeadHover] = useState(false) // genrage-style: header goes black while the cursor is over it
   const [searchOpen, setSearchOpen] = useState(false)
@@ -145,7 +145,7 @@ export default function Header() {
                           <Link to={item.viewAll ?? '/new-arrivals'} className="group/promo block">
                             <div className="aspect-[4/3] overflow-hidden bg-bg-secondary">
                               <img
-                                src={item.promo.img}
+                                src={resolveMedia(siteMedia, item.promo.mediaKey)}
                                 alt=""
                                 onError={(e) => (e.currentTarget.style.display = 'none')}
                                 className="h-full w-full object-cover transition-transform duration-500 group-hover/promo:scale-105"

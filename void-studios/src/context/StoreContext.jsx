@@ -38,6 +38,10 @@ export function StoreProvider({ children }) {
   // mock mode is a silent fallback, catalog fetch errors are surfaced.
   const [apiLive, setApiLive] = useState(null) // null = still probing
   const [catalog, setCatalog] = useState(PRODUCTS) // mock products are already in UI shape
+  // Admin-managed imagery for fixed slots (hero, campaign, editorial, menu
+  // tiles): map of key → Cloudinary URL. Empty map = every slot shows its
+  // built-in default from content.js.
+  const [siteMedia, setSiteMedia] = useState({})
 
   const boot = useCallback(async () => {
     // Retry aggressively before declaring the API dead: the hosted backend
@@ -71,6 +75,36 @@ export function StoreProvider({ children }) {
     (id) => catalog.find((p) => p.id === id),
     [catalog],
   )
+
+  // --- site media ----------------------------------------------------
+  // Public read of admin-managed slot imagery; refetched whenever the
+  // connection state flips live (covers the offline→online recovery path).
+  // Failure is silent — built-in defaults remain in place.
+  useEffect(() => {
+    if (apiLive !== true) return undefined
+    let cancelled = false
+    api.siteMedia()
+      .then((m) => {
+        if (!cancelled) setSiteMedia(m?.media || {})
+      })
+      .catch(() => {
+        /* older backend without /site-media — defaults apply */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [apiLive])
+
+  // Admin UI calls this after an upload/reset so the whole storefront
+  // (header tiles included) updates without a reload.
+  const applySiteMedia = useCallback((key, url) => {
+    setSiteMedia((prev) => {
+      const next = { ...prev }
+      if (url) next[key] = url
+      else delete next[key]
+      return next
+    })
+  }, [])
 
   // --- auth --------------------------------------------------------
   const [user, setUser] = useState(null)
@@ -333,6 +367,7 @@ export function StoreProvider({ children }) {
     apiLive,
     boot,
     catalog,
+    siteMedia, applySiteMedia,
     user, login, register, logout,
     cart, addToCart, updateQty, removeLine, clearCart, cartCount, cartLines, cartSubtotal,
     wishlist: wishlistIds, toggleWishlist,

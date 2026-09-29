@@ -313,3 +313,29 @@ export const reviewUpdateSchema = z.object({
     })
     .strip(),
 });
+
+// ─── Site media (admin-managed storefront imagery) ─────────────────────────
+
+/**
+ * Legal slot keys — MUST stay in sync with SITE_MEDIA_SLOTS in the
+ * storefront (void-studios/src/content/content.js). Each key maps to a
+ * fixed image slot: hero banner, campaign banner, editorial split and
+ * the header mega-menu promo tiles.
+ */
+export const SITE_MEDIA_KEYS = [
+  "hero",
+  "campaign",
+  "editorial",
+  "mega-tops",
+  "mega-bottoms",
+];
+
+export const siteMediaKeyParamSchema = z.object({
+  params: z.object({
+    key: z
+      .string()
+      .trim()
+      .lowercase()
+      .regex(/^[a-z0-9-]+$/, "Invalid media slot key"),
+  }),
+});

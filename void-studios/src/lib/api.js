@@ -151,6 +151,16 @@ export const api = {
   categories: () => request('/categories'),
   brands: () => request('/brands'),
 
+  // site media — admin-managed imagery for fixed slots (hero, campaign,
+  // editorial, mega-menu tiles). Public read, admin write.
+  siteMedia: () => request('/site-media'),
+  setSiteMedia: (key, file) => {
+    const fd = new FormData()
+    fd.append('image', file)
+    return upload(`/site-media/${encodeURIComponent(key)}`, fd)
+  },
+  resetSiteMedia: (key) => request(`/site-media/${encodeURIComponent(key)}`, { method: 'DELETE' }),
+
   // admin — product management (JSON bodies; images go through uploadImages)
   adminCreateProduct: (body) => request('/products', { method: 'POST', body }),
   adminUpdateProduct: (id, body) => request(`/products/${id}`, { method: 'PATCH', body }),
