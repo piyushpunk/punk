@@ -7,6 +7,7 @@ import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 import { productHref } from '../lib/adapter'
 import { SITE_ORIGIN } from '../config/site'
+import ProductReviews from '../components/ProductReviews'
 import { HeartIcon, BagIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/Icons'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
@@ -311,6 +312,9 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
+
+        {/* customer reviews — real data via /reviews, quietly hidden on old backend */}
+        <ProductReviews productId={product.id} productName={product.name} />
 
         {/* related */}
         {related.length > 0 && (

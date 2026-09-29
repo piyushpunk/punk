@@ -172,6 +172,14 @@ export const api = {
   },
   adminRemoveImage: (id, url) => request(`/products/${id}/images`, { method: 'DELETE', body: { url } }),
 
+  // reviews — public read, signed-in customers write (one per user per
+  // product; verifiedPurchase is computed server-side from delivered orders)
+  productReviews: (productId, params = {}) =>
+    request(`/reviews/product/${encodeURIComponent(productId)}?${new URLSearchParams(params)}`),
+  addReview: (productId, body) =>
+    request(`/reviews/${encodeURIComponent(productId)}`, { method: 'POST', body }),
+  deleteReview: (id) => request(`/reviews/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+
   // orders — customer + admin
   myOrders: () => request('/orders/me'),
   adminAllOrders: (params = {}) =>
