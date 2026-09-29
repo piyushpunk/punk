@@ -6,6 +6,7 @@ import { SkeletonProduct, SkeletonBlock } from '../components/Skeletons'
 import { useStore } from '../context/StoreContext'
 import { useSeo } from '../lib/seo'
 import { productHref } from '../lib/adapter'
+import { SITE_ORIGIN } from '../config/site'
 import { HeartIcon, BagIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/Icons'
 
 const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
@@ -56,7 +57,7 @@ export default function ProductPage() {
         availability: product.inStock
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
-        url: `https://akuma-store.vercel.app${productHref(product)}`,
+        url: `${SITE_ORIGIN}${productHref(product)}`,
       },
     }
   }, [product])

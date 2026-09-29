@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { SITE_ORIGIN } from '../config/site'
 
 // ─── AKUMA SEO runtime ──────────────────────────────────────────────────────
 // Single source of truth for per-route <head> management. SPA crawlers that
@@ -11,7 +12,7 @@ import { useEffect } from 'react'
 // doesn't waste crawl budget or rank shell pages. `schema` accepts JSON-LD
 // objects, injected once per page render.
 
-const ORIGIN = 'https://akuma-store.vercel.app'
+const ORIGIN = SITE_ORIGIN
 
 function upsertMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -76,7 +77,7 @@ export function useSeo({ title, description, path = '', noindex = false, schema 
         '@type': 'Organization',
         name: 'AKUMA',
         url: ORIGIN,
-        logo: 'https://akuma-store.vercel.app/assets/brand/logo-black.png',
+        logo: `${SITE_ORIGIN}/assets/brand/logo-black.png`,
         email: 'akuma04313@gmail.com',
         telephone: '+91-9318407257',
         address: { '@type': 'PostalAddress', addressCountry: 'IN', addressRegion: 'Delhi' },

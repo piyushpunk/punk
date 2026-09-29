@@ -10,12 +10,13 @@
 import { writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { SITE_ORIGIN } from '../src/config/site.js'
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
 const OUT = join(ROOT, 'public', 'sitemap.xml')
 // Canonical brand domain — every loc/canonical must use exactly one host
 // so Google consolidates signals instead of splitting them across aliases.
-const BASE = 'https://akuma-store.vercel.app'
+const BASE = SITE_ORIGIN
 const API =
   process.env.VITE_API_URL ||
   process.env.SITEMAP_API_URL ||
