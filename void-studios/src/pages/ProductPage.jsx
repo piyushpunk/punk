@@ -25,6 +25,11 @@ export default function ProductPage() {
   const [activeImg, setActiveImg] = useState(0)
   const [error, setError] = useState('')
 
+  // ⚠ must stay ABOVE the early returns below — a hook declared after
+  // "if (!product) return …" makes React throw #310 the moment the product
+  // resolves (hooks counted differently between renders), blanking the page.
+  const touchX = useRef(null)
+
   // reset selections when navigating between products
   useEffect(() => {
     setSize(null)
@@ -107,7 +112,6 @@ export default function ProductPage() {
 
   // touch swipe on the main image (mobile) — horizontal drag > 40px flips
   // to the next/previous shot; vertical scrolling stays untouched.
-  const touchX = useRef(null)
   const onTouchStart = (e) => (touchX.current = e.touches[0].clientX)
   const onTouchEnd = (e) => {
     if (touchX.current == null) return
