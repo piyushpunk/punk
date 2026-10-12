@@ -330,6 +330,36 @@ export const SITE_MEDIA_KEYS = [
   "mega-bottoms",
 ];
 
+// ─── Pageviews (first-party traffic tracking) ──────────────────────────────
+const referrerish = z
+  .string()
+  .trim()
+  .max(500)
+  .default("")
+  .refine((v) => /^$|^https?:\/\//i.test(v), "referrer must be empty or a URL");
+
+export const pageViewSchema = z.object({
+  body: z.object({
+    /** Client route, e.g. "/product/centipede" — leading slash checked so
+     *  junk like a full URL or an empty string never lands in the panel. */
+    path: z
+      .string()
+      .trim()
+      .max(300)
+      .refine((v) => v.startsWith("/"), "path must start with a slash"),
+    ref: referrerish,
+    /** Stable per-browser id from localStorage (no cookies, no PII). */
+    visitor: z.string().trim().max(64).default(""),
+  }),
+});
+
+export const trafficQuerySchema = z.object({
+  query: z.object({
+    /** Summary window in days (1-90). */
+    days: z.coerce.number().int().min(1).max(90).default(14),
+  }),
+});
+
 export const siteMediaKeyParamSchema = z.object({
   params: z.object({
     key: z

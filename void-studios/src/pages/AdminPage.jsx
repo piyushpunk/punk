@@ -403,6 +403,7 @@ export default function AdminPage() {
             </button>
             <Link to="/orders" className="ak-btn-outline">Manage Orders →</Link>
             <Link to="/admin/site-media" className="ak-btn-outline">Site Media →</Link>
+            <Link to="/admin/traffic" className="ak-btn-outline">Traffic →</Link>
           </div>
         </div>
 

@@ -161,6 +161,10 @@ export const api = {
   },
   resetSiteMedia: (key) => request(`/site-media/${encodeURIComponent(key)}`, { method: 'DELETE' }),
 
+  // traffic — first-party pageviews (public write done by lib/pageview.js
+  // with plain fetch; this is the admin read for the /admin/traffic panel)
+  traffic: (days = 14) => request(`/pageviews/traffic?${new URLSearchParams({ days })}`),
+
   // admin — product management (JSON bodies; images go through uploadImages)
   adminCreateProduct: (body) => request('/products', { method: 'POST', body }),
   adminUpdateProduct: (id, body) => request(`/products/${id}`, { method: 'PATCH', body }),

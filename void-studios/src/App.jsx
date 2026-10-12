@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { trackPageView } from './lib/pageview'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
@@ -23,6 +24,7 @@ import OrdersPage, { OrderDetailPage } from './pages/OrdersPage'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import SiteMediaPage from './pages/SiteMediaPage'
+import TrafficPage from './pages/TrafficPage'
 import SearchPage from './pages/SearchPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TermsPage from './pages/TermsPage'
@@ -36,6 +38,13 @@ export default function App() {
   useEffect(() => {
     boot()
   }, [boot])
+
+  // First-party pageview per navigation (runs once per route change;
+  // failures are swallowed inside trackPageView).
+  const location = useLocation()
+  useEffect(() => {
+    trackPageView(location.pathname)
+  }, [location.pathname])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -71,6 +80,7 @@ export default function App() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/site-media" element={<SiteMediaPage />} />
+          <Route path="/admin/traffic" element={<TrafficPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
